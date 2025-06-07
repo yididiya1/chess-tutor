@@ -20,13 +20,14 @@ const generatePuzzles = () => {
     },
     // Puzzle 2: Black to play - Win material
     { 
-      fen: "r1bqkb1r/pppp1ppp/2n2n2/4p3/4P3/3P1N2/PPP2PPP/RNBQKB1R b KQkq - 0 4", 
-      solution: ["Nxe4", "dxe4"], 
-      computerResponse: ["dxe4"], 
+      fen: "rnbq1r2/1p2b1k1/p3p2p/5ppQ/3PN3/P2B2N1/1P3PPP/2R2RK1 b - - 0 17", 
+      solution: ["f5", "e4", "d3", "e4", "d8", "e8", "c1", "c8", "e8", "h5", "g3", "h5"], 
+      computerResponse: ["e4", "d8", "c1", "c8", "e8", "h5", "g3", "h5"], 
       playerColor: "black",
       type: "Tactics", 
       difficulty: "Beginner", 
       elo: 950 
+      // f5e4 d3e4 d8e8 c1c8 e8h5 g3h5
     },
     // Puzzle 3: White to play - Bishop sacrifice
     { 
