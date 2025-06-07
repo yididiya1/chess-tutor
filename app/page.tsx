@@ -96,6 +96,38 @@ export default function Home() {
               );
             })}
           </div>
+
+          {/* Opening Practice */}
+          <Link href="/openings" className="group">
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-white/20 hover:bg-white/95 transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl">
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-green-200 transition-colors">
+                  <span className="text-2xl">📚</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900">Opening Practice</h3>
+                  <p className="text-gray-600">Learn chess openings</p>
+                </div>
+              </div>
+              <p className="text-gray-700">Master the most important chess openings with interactive practice and variations.</p>
+            </div>
+          </Link>
+
+          {/* Opening Traps */}
+          <Link href="/traps" className="group">
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-white/20 hover:bg-white/95 transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl">
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-red-200 transition-colors">
+                  <span className="text-2xl">🪤</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900">Opening Traps</h3>
+                  <p className="text-gray-600">Learn tactical traps</p>
+                </div>
+              </div>
+              <p className="text-gray-700">Discover and practice common opening traps to catch your opponents off guard.</p>
+            </div>
+          </Link>
         </div>
       </div>
     </div>
