@@ -45,6 +45,9 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
     setShowHint(false);
     setHintArrow(null);
     setIsPlayerTurn(true);
+
+    // For puzzles, player always moves first regardless of color
+    // No automatic computer first move needed
   }, [position, puzzle.id, puzzle.playerColor]);
 
   function makeComputerMove(currentPlayerMoveCount?: number, gameCopy?: Chess) {
@@ -52,6 +55,8 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
     const actualPlayerMoveCount = currentPlayerMoveCount ?? playerMoveCount;
     
     // Check if there's a computer response available
+    // Computer responses are indexed by the player move they're responding to (0-based)
+    // Player makes move 1 (playerMoveCount=1), computer responds with response[0]
     const computerResponseIndex = actualPlayerMoveCount - 1;
     console.log(`makeComputerMove called with playerMoveCount: ${actualPlayerMoveCount}, computerResponseIndex: ${computerResponseIndex}`);
     
@@ -82,7 +87,7 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
           setTotalMoveIndex(prev => prev + 1);
           
           // Check if puzzle is complete
-          if (totalMoveIndex + 1 >= puzzle.solution.length) {
+          if (actualPlayerMoveCount >= puzzle.solution.length) {
             setMessage("🎉 Puzzle completed! Well done!");
             setIsComplete(true);
             setIsPlayerTurn(false);
@@ -110,8 +115,9 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
 
   function showHintArrow() {
     if (totalMoveIndex < puzzle.solution.length && !isComplete && isPlayerTurn) {
+      // The solution array contains ALL moves (player + computer), so use totalMoveIndex
       const currentExpectedMove = puzzle.solution[totalMoveIndex];
-      console.log(`Showing hint for move: ${currentExpectedMove}`);
+      console.log(`Showing hint for move: ${currentExpectedMove}, Total Move Index: ${totalMoveIndex}`);
       
       // Create a test game to get move details
       const testGame = new Chess(game.fen());
@@ -171,8 +177,9 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
     setShowHint(false);
     
     // Check if the move matches the expected solution
+    // The solution array contains ALL moves (player + computer), so use totalMoveIndex
     const expectedMove = puzzle.solution[totalMoveIndex];
-    console.log(`Player move: ${result.san}, Expected: ${expectedMove}`);
+    console.log(`Player move: ${result.san}, Expected: ${expectedMove}, Total Move Index: ${totalMoveIndex}`);
     
     // Check multiple formats: SAN and coordinate notation
     const isCorrectMove = expectedMove === result.san || 
@@ -196,12 +203,15 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
         setIsComplete(true);
       } else {
         // Check if computer should respond
-        const computerResponseIndex = playerMoveCount;
-        if (computerResponseIndex < puzzle.computerResponse.length) {
+        const newPlayerMoveCount = playerMoveCount + 1; // Calculate the new value
+        // Computer responses are indexed by the player move they're responding to (0-based)
+        // First player move (index 0) gets computer response 0, etc.
+        const computerResponseIndex = playerMoveCount; // Use current playerMoveCount as index
+        if (computerResponseIndex >= 0 && computerResponseIndex < puzzle.computerResponse.length) {
           setMessage("✅ Correct! Computer is responding...");
           // Make computer move after a short delay, passing the updated game state
           setTimeout(() => {
-            makeComputerMove(playerMoveCount + 1, gameCopy); // Pass both count and updated game
+            makeComputerMove(newPlayerMoveCount, gameCopy); // Pass the correct updated value
           }, 1000);
         } else {
           // No computer response, continue with player
@@ -241,10 +251,13 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
     setShowHint(false);
     setHintArrow(null);
     setIsPlayerTurn(true);
+
+    // For puzzles, player always moves first regardless of color
+    // No automatic computer first move needed
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div className="w-full max-w-6xl mx-auto">
       <div className="mb-4 p-4 bg-white rounded-lg shadow-sm">
         <div className="flex justify-between items-center mb-2">
           <div className={`text-lg font-semibold ${isComplete ? 'text-green-600' : showHint ? 'text-blue-600' : 'text-gray-700'}`}>
@@ -280,46 +293,93 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
         )}
       </div>
 
-      <div className="bg-white p-4 rounded-lg shadow-lg">
-        <Chessboard
-          position={gamePosition}
-          onPieceDrop={onDrop}
-          boardOrientation={puzzle.playerColor === 'white' ? 'white' : 'black'}
-          boardWidth={Math.min(600, typeof window !== 'undefined' ? window.innerWidth - 100 : 600)}
-          customBoardStyle={{
-            borderRadius: "8px",
-            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-          }}
-          customDarkSquareStyle={{ backgroundColor: "#779952" }}
-          customLightSquareStyle={{ backgroundColor: "#edeed1" }}
-          customArrows={hintArrow ? [hintArrow] : []}
-          customArrowColor="rgb(255, 170, 0)"
-        />
-      </div>
+      <div className="flex gap-6">
+        {/* Chessboard Section */}
+        <div className="bg-white p-4 rounded-lg shadow-lg">
+          <Chessboard
+            position={gamePosition}
+            onPieceDrop={onDrop}
+            boardOrientation={puzzle.playerColor === 'white' ? 'white' : 'black'}
+            boardWidth={Math.min(600, typeof window !== 'undefined' ? window.innerWidth - 400 : 600)}
+            customBoardStyle={{
+              borderRadius: "8px",
+              boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+            }}
+            customDarkSquareStyle={{ backgroundColor: "#779952" }}
+            customLightSquareStyle={{ backgroundColor: "#edeed1" }}
+            customArrows={hintArrow ? [hintArrow] : []}
+            customArrowColor="rgb(255, 170, 0)"
+          />
+        </div>
 
-      <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-        <h3 className="font-semibold text-gray-800 mb-2">Puzzle Information</h3>
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div>
-            <span className="text-gray-600">Type:</span>
-            <span className="ml-2 font-medium">{puzzle.type}</span>
-          </div>
-          <div>
-            <span className="text-gray-600">Difficulty:</span>
-            <span className="ml-2 font-medium">{puzzle.difficulty}</span>
-          </div>
-          <div>
-            <span className="text-gray-600">Rating:</span>
-            <span className="ml-2 font-medium">{puzzle.elo}</span>
-          </div>
-          <div>
-            <span className="text-gray-600">Status:</span>
-            <span className={`ml-2 font-medium ${isComplete ? 'text-green-600' : 'text-gray-600'}`}>
-              {isComplete ? 'Completed' : 'In Progress'}
-            </span>
+        {/* Puzzle Information Panel */}
+        <div className="w-80 bg-white p-6 rounded-lg shadow-lg">
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">Puzzle Information</h3>
+          
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600 font-medium">Type:</span>
+              <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                {puzzle.type}
+              </span>
+            </div>
+            
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600 font-medium">Difficulty:</span>
+              <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                puzzle.difficulty === 'Beginner' ? 'bg-green-100 text-green-800' :
+                puzzle.difficulty === 'Intermediate' ? 'bg-yellow-100 text-yellow-800' :
+                'bg-red-100 text-red-800'
+              }`}>
+                {puzzle.difficulty}
+              </span>
+            </div>
+            
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600 font-medium">Rating:</span>
+              <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">
+                {puzzle.elo}
+              </span>
+            </div>
+            
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600 font-medium">Playing as:</span>
+              <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                puzzle.playerColor === 'white' 
+                  ? 'bg-gray-100 text-gray-800' 
+                  : 'bg-gray-800 text-white'
+              }`}>
+                {puzzle.playerColor === 'white' ? '⚪ White' : '⚫ Black'}
+              </span>
+            </div>
+            
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600 font-medium">Status:</span>
+              <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                isComplete ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'
+              }`}>
+                {isComplete ? '✅ Completed' : '🎯 In Progress'}
+              </span>
+            </div>
+            
+            <div className="pt-4 border-t border-gray-200">
+              <span className="text-gray-600 font-medium">Progress:</span>
+              <div className="mt-2">
+                <div className="flex justify-between text-sm text-gray-600 mb-1">
+                  <span>Moves completed</span>
+                  <span>{Math.floor(totalMoveIndex / 2)}/{Math.ceil(puzzle.solution.length / 2)}</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    className="bg-blue-500 h-2 rounded-full transition-all duration-300" 
+                    style={{ width: `${Math.min(100, (totalMoveIndex / puzzle.solution.length) * 100)}%` }}
+                  ></div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
-} 
+}
