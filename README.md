@@ -1,33 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Chess Tutor
+
+An interactive chess learning application built with Next.js, featuring puzzles, opening practice, and multiple themes.
+
+## Features
+
+- **🧩 Chess Puzzles**: 20 carefully crafted puzzles covering tactics, openings, and endgames
+- **📚 Opening Practice**: Learn major chess openings with interactive practice
+- **🎨 Multiple Themes**: 5 beautiful themes (Light, Dark, Ocean Blue, Royal Purple, Forest Green)
+- **💡 Hint System**: Get visual hints with arrows pointing to the best moves
+- **🤖 Computer Responses**: Automatic opponent moves for realistic puzzle solving
+- **📊 Progress Tracking**: Track your puzzle-solving progress
+- **♟️ Interactive Chess Board**: Drag-and-drop piece movement with move validation
+
+## Technologies Used
+
+- **Next.js 15** - React framework with App Router
+- **TypeScript** - Type-safe development
+- **Tailwind CSS** - Modern styling
+- **chess.js** - Chess game logic and move validation
+- **react-chessboard** - Interactive chess board component
 
 ## Getting Started
 
-First, run the development server:
+First, install the dependencies:
+
+```bash
+npm install
+# or
+yarn install
+```
+
+Then, run the development server:
 
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `/app/puzzles` - Chess puzzle solving interface
+- `/app/openings` - Opening practice system
+- `/app/components` - Reusable React components
+- `/app/contexts` - React context for theme management
 
-## Learn More
+## How to Play
 
-To learn more about Next.js, take a look at the following resources:
+1. **Puzzles**: Select a puzzle from the grid, make the best move for your color
+2. **Openings**: Choose an opening family, then a specific variation to practice
+3. **Themes**: Use the theme switcher to customize your experience
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Contributing
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Feel free to submit issues and pull requests to improve the chess tutor!
 
 ## Deploy on Vercel
 
