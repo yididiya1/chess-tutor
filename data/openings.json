@@ -1,0 +1,238 @@
+[
+  {
+    "id": 1,
+    "name": "Italian Game",
+    "moves": ["e4", "e5", "Nf3", "Nc6", "Bc4"],
+    "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3",
+    "whiteWinRate": 52.3,
+    "blackWinRate": 31.2,
+    "drawRate": 16.5,
+    "popularity": 85,
+    "difficulty": "Beginner",
+    "description": "A classical opening focusing on rapid development and central control.",
+    "variations": [
+      {
+        "id": 11,
+        "name": "Giuoco Piano",
+        "moves": ["e4", "e5", "Nf3", "Nc6", "Bc4", "Bc5"],
+        "fen": "r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4",
+        "whiteWinRate": 53.1,
+        "blackWinRate": 30.8,
+        "drawRate": 16.1,
+        "description": "The quiet game - a solid positional approach to the Italian Game."
+      },
+      {
+        "id": 12,
+        "name": "Two Knights Defense",
+        "moves": ["e4", "e5", "Nf3", "Nc6", "Bc4", "Nf6"],
+        "fen": "r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4",
+        "whiteWinRate": 51.8,
+        "blackWinRate": 32.1,
+        "drawRate": 16.1,
+        "description": "Sharp tactical play with early knight development."
+      },
+      {
+        "id": 13,
+        "name": "Hungarian Defense",
+        "moves": ["e4", "e5", "Nf3", "Nc6", "Bc4", "Be7"],
+        "fen": "r1bqk1nr/ppppbppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4",
+        "whiteWinRate": 54.2,
+        "blackWinRate": 29.3,
+        "drawRate": 16.5,
+        "description": "A solid but passive defense for Black."
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Queen's Gambit",
+    "moves": ["d4", "d5", "c4"],
+    "fen": "rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq c3 0 2",
+    "whiteWinRate": 55.8,
+    "blackWinRate": 28.7,
+    "drawRate": 15.5,
+    "popularity": 92,
+    "difficulty": "Intermediate",
+    "description": "A strategic opening offering a pawn to gain central control.",
+    "variations": [
+      {
+        "id": 21,
+        "name": "Queen's Gambit Accepted",
+        "moves": ["d4", "d5", "c4", "dxc4"],
+        "fen": "rnbqkbnr/ppp1pppp/8/8/2pP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3",
+        "whiteWinRate": 56.2,
+        "blackWinRate": 27.8,
+        "drawRate": 16.0,
+        "description": "Black accepts the gambit pawn."
+      },
+      {
+        "id": 22,
+        "name": "Queen's Gambit Declined",
+        "moves": ["d4", "d5", "c4", "e6"],
+        "fen": "rnbqkbnr/ppp2ppp/4p3/3p4/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3",
+        "whiteWinRate": 55.4,
+        "blackWinRate": 29.1,
+        "drawRate": 15.5,
+        "description": "Black declines the gambit and maintains central tension."
+      },
+      {
+        "id": 23,
+        "name": "Slav Defense",
+        "moves": ["d4", "d5", "c4", "c6"],
+        "fen": "rnbqkbnr/pp2pppp/2p5/3p4/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3",
+        "whiteWinRate": 54.9,
+        "blackWinRate": 29.8,
+        "drawRate": 15.3,
+        "description": "A solid defense supporting the d5 pawn with c6."
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Sicilian Defense",
+    "moves": ["e4", "c5"],
+    "fen": "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2",
+    "whiteWinRate": 48.2,
+    "blackWinRate": 35.1,
+    "drawRate": 16.7,
+    "popularity": 88,
+    "difficulty": "Advanced",
+    "description": "Black's most popular response to e4, leading to sharp tactical play.",
+    "variations": [
+      {
+        "id": 31,
+        "name": "Sicilian Najdorf",
+        "moves": ["e4", "c5", "Nf3", "d6", "d4", "cxd4", "Nxd4", "Nf6", "Nc3", "a6"],
+        "fen": "rnbqkb1r/1p2pppp/p2p1n2/8/3NP3/2N5/PPP2PPP/R1BQKB1R w KQkq - 0 6",
+        "whiteWinRate": 47.8,
+        "blackWinRate": 36.2,
+        "drawRate": 16.0,
+        "description": "The most popular and sharp variation of the Sicilian."
+      },
+      {
+        "id": 32,
+        "name": "Sicilian Dragon",
+        "moves": ["e4", "c5", "Nf3", "d6", "d4", "cxd4", "Nxd4", "Nf6", "Nc3", "g6"],
+        "fen": "rnbqkb1r/pp2pp1p/3p1np1/8/3NP3/2N5/PPP2PPP/R1BQKB1R w KQkq - 0 6",
+        "whiteWinRate": 46.9,
+        "blackWinRate": 37.1,
+        "drawRate": 16.0,
+        "description": "A hypermodern setup with fianchettoed bishop."
+      },
+      {
+        "id": 33,
+        "name": "Sicilian Accelerated Dragon",
+        "moves": ["e4", "c5", "Nf3", "g6", "d4", "cxd4", "Nxd4", "Bg7"],
+        "fen": "rnbqk1nr/pp1pppbp/6p1/8/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 2 5",
+        "whiteWinRate": 48.1,
+        "blackWinRate": 35.8,
+        "drawRate": 16.1,
+        "description": "An early g6 setup avoiding some of White's attacking lines."
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "French Defense",
+    "moves": ["e4", "e6"],
+    "fen": "rnbqkbnr/pppp1ppp/4p3/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+    "whiteWinRate": 51.7,
+    "blackWinRate": 32.4,
+    "drawRate": 15.9,
+    "popularity": 65,
+    "difficulty": "Intermediate",
+    "description": "A solid defense creating a strong pawn chain.",
+    "variations": [
+      {
+        "id": 41,
+        "name": "French Winawer",
+        "moves": ["e4", "e6", "d4", "d5", "Nc3", "Bb4"],
+        "fen": "rnbqk1nr/ppp2ppp/4p3/3p4/1b1PP3/2N5/PPP2PPP/R1BQKBNR w KQkq - 2 4",
+        "whiteWinRate": 50.8,
+        "blackWinRate": 33.2,
+        "drawRate": 16.0,
+        "description": "Sharp tactical play with early bishop pin."
+      },
+      {
+        "id": 42,
+        "name": "French Classical",
+        "moves": ["e4", "e6", "d4", "d5", "Nc3", "Nf6"],
+        "fen": "rnbqkb1r/ppp2ppp/4pn2/3p4/3PP3/2N5/PPP2PPP/R1BQKBNR w KQkq - 2 4",
+        "whiteWinRate": 52.1,
+        "blackWinRate": 31.9,
+        "drawRate": 16.0,
+        "description": "Classical development with knight to f6."
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Ruy Lopez",
+    "moves": ["e4", "e5", "Nf3", "Nc6", "Bb5"],
+    "fen": "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3",
+    "whiteWinRate": 53.9,
+    "blackWinRate": 30.8,
+    "drawRate": 15.3,
+    "popularity": 78,
+    "difficulty": "Intermediate",
+    "description": "One of the oldest chess openings, named after a Spanish priest.",
+    "variations": [
+      {
+        "id": 51,
+        "name": "Ruy Lopez Berlin",
+        "moves": ["e4", "e5", "Nf3", "Nc6", "Bb5", "Nf6"],
+        "fen": "r1bqkb1r/pppp1ppp/2n2n2/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4",
+        "whiteWinRate": 52.8,
+        "blackWinRate": 31.2,
+        "drawRate": 16.0,
+        "description": "The Berlin Defense - a solid equalizing system."
+      },
+      {
+        "id": 52,
+        "name": "Ruy Lopez Morphy",
+        "moves": ["e4", "e5", "Nf3", "Nc6", "Bb5", "a6"],
+        "fen": "r1bqkbnr/1ppp1ppp/p1n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4",
+        "whiteWinRate": 54.2,
+        "blackWinRate": 30.1,
+        "drawRate": 15.7,
+        "description": "The main line with a6 attacking the bishop."
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "name": "King's Indian Defense",
+    "moves": ["d4", "Nf6", "c4", "g6"],
+    "fen": "rnbqkb1r/pppppp1p/5np1/8/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3",
+    "whiteWinRate": 49.3,
+    "blackWinRate": 34.2,
+    "drawRate": 16.5,
+    "popularity": 71,
+    "difficulty": "Advanced",
+    "description": "A hypermodern defense allowing White central control initially."
+  },
+  {
+    "id": 7,
+    "name": "English Opening",
+    "moves": ["c4"],
+    "fen": "rnbqkbnr/pppppppp/8/8/2P5/8/PP1PPPPP/RNBQKBNR b KQkq c3 0 1",
+    "whiteWinRate": 52.1,
+    "blackWinRate": 32.6,
+    "drawRate": 15.3,
+    "popularity": 58,
+    "difficulty": "Intermediate",
+    "description": "A flexible opening controlling the center from the flank."
+  },
+  {
+    "id": 8,
+    "name": "Caro-Kann Defense",
+    "moves": ["e4", "c6"],
+    "fen": "rnbqkbnr/pp1ppppp/2p5/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+    "whiteWinRate": 50.8,
+    "blackWinRate": 33.1,
+    "drawRate": 16.1,
+    "popularity": 62,
+    "difficulty": "Beginner",
+    "description": "A solid defense similar to the French but more flexible."
+  }
+] 
