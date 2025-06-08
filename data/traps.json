@@ -1,0 +1,283 @@
+[
+  {
+    "id": 1,
+    "name": "Italian Game Traps",
+    "moves": ["e4", "e5", "Nf3", "Nc6", "Bc4"],
+    "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3",
+    "whiteWinRate": 75.3,
+    "blackWinRate": 15.2,
+    "drawRate": 9.5,
+    "popularity": 85,
+    "difficulty": "Beginner",
+    "description": "Common traps in the Italian Game that can catch unprepared opponents.",
+    "variations": [
+      {
+        "id": 11,
+        "name": "Legal's Mate Trap",
+        "moves": ["e4", "e5", "Nf3", "Nc6", "Bc4", "d6", "Nc3", "Bg4", "h3", "Bh5", "Nxe5", "Bxd1", "Bxf7+", "Ke7", "Nd5#"],
+        "fen": "r2qkbnr/pppbkppp/3p4/3Np3/2B1P3/7P/PPPP1PP1/R1bQK2R b KQq - 1 8",
+        "whiteWinRate": 100.0,
+        "blackWinRate": 0.0,
+        "drawRate": 0.0,
+        "description": "A classic tactical trap leading to forced mate if Black falls for it."
+      },
+      {
+        "id": 12,
+        "name": "Blackburne Shilling Trap",
+        "moves": ["e4", "e5", "Nf3", "Nc6", "Bc4", "Nd4", "Nxe5", "Qg5", "Nxf7", "Qxg2", "Rf1", "Qxe4+", "Be2", "Nf3#"],
+        "fen": "r1b1kbnr/ppp3pp/8/8/2B1q3/5n2/PPPPBPPP/RNBQ1RK1 w q - 1 8",
+        "whiteWinRate": 0.0,
+        "blackWinRate": 100.0,
+        "drawRate": 0.0,
+        "description": "A dangerous counter-trap for Black against over-aggressive White play."
+      },
+      {
+        "id": 13,
+        "name": "Knight Fork Trap",
+        "moves": ["e4", "e5","Nf3", "Nc6","Bc4", "Bc5","c3", "d6","d4", "Bb6","dxe5", "Nxe5","Nxe5", "dxe5","Bxf7+", "Kxf7","Qxd8"],
+        "fen": "r1bqkb1r/pppp1ppp/3p4/4n3/2B1P3/2N2N2/PPP3PP/R1BQK2R b KQkq - 0 7",
+        "whiteWinRate": 85.0,
+        "blackWinRate": 10.0,
+        "drawRate": 5.0,
+        "description": "A tactical sequence involving knight forks and piece sacrifices."
+      },
+      {
+        "id": 14,
+        "name": "Pawn Storm Trap",
+        "moves": ["e4", "e5", "Nf3", "Nc6", "Bc4", "d6", "d3", "f5", "exf5", "Bxf5", "Ng5", "Nh6", "Qh5+", "g6", "Qf3"],
+        "fen": "r1bqkb1r/pppp1ppp/3p4/n3P3/1PB1P3/3B4/P1P2PPP/RN1QK2R b KQkq - 0 8",
+        "whiteWinRate": 75.0,
+        "blackWinRate": 20.0,
+        "drawRate": 5.0,
+        "description": "A trap involving pawn advances and piece pressure.",
+        "solution": ["c6", "b4"],
+        "computerResponse": ["c6"],
+        "playerColor": "white"
+      },
+      {
+        "id": 15,
+        "name": "Queen Sacrifice Trap",
+        "moves": ["e4", "e5", "Nf3", "Nc6", "Bc4", "Be7", "d3", "d6", "Ng5", "Bxg5", "Qh5", "Qf6", "Bxg5", "Qg6", "Qh4", "h6", "Bh4", "g5"],
+        "fen": "r1bqkb1r/pppp1ppp/1bn5/4p1Q1/2B1P1p1/8/PPPP1PPP/RNB2RK1 w kq - 0 9",
+        "whiteWinRate": 90.0,
+        "blackWinRate": 8.0,
+        "drawRate": 2.0,
+        "description": "A spectacular queen sacrifice leading to mate.",
+        "solution": ["Nxg5", "fxg5", "Qh5+", "Kd7", "Bxg5", "Qg7", "Be6+", "Kxe6", "Qe8+", "d5"],
+        "computerResponse": ["fxg5", "Kd7", "Qg7", "Kxe6", "d5"],
+        "playerColor": "white"
+      },
+      {
+        "id": 16,
+        "name": "Knight Discovery Trap",
+        "moves": ["e4", "e5", "Nf3", "Nc6", "Bc4", "Be7", "Qe2", "d6", "Nc3", "Nf6", "d3", "O-O", "Bg5", "Re8", "O-O-O", "Rf8"],
+        "fen": "r1bqk2r/pppp1ppp/2n5/3Qn3/2B1P3/5N2/PPP2PPP/RNB1K2R b KQkq - 0 6",
+        "whiteWinRate": 70.0,
+        "blackWinRate": 25.0,
+        "drawRate": 5.0,
+        "description": "A tactical trap involving discovered attacks and knight maneuvers.",
+        "solution": ["Bxf2+", "Ke2"],
+        "computerResponse": ["Bxf2+"],
+        "playerColor": "white"
+      },
+      {
+        "id": 17,
+        "name": "Greek Gift Trap",
+        "moves": ["e4", "e5", "Nf3", "Nc6", "Bc4", "f5", "d3", "fxe4", "dxe4", "Nf6", "Ng5", "d6", "Qh5+", "g6", "Qf3", "Bg7", "h4", "h6"],
+        "fen": "r1bqkb1r/pppp1ppp/6n1/4p3/1PB1P1n1/7P/2PP1PP1/RNBQK1NR w KQkq - 0 8",
+        "whiteWinRate": 95.0,
+        "blackWinRate": 3.0,
+        "drawRate": 2.0,
+        "description": "The classic bishop sacrifice on h7 leading to a mating attack.",
+        "solution": ["h3", "Nh6", "d5", "Ne7", "d6", "Ng6", "Bg5", "f6", "exf6", "gxf6", "Qe2+", "Kf8", "Bxh6#"],
+        "computerResponse": ["Nh6", "Ne7", "Ng6", "f6", "gxf6", "Kf8"],
+        "playerColor": "white"
+      },
+      {
+        "id": 18,
+        "name": "Smothered Knight Trap",
+        "moves": ["e4", "e5", "Nf3", "Nc6", "Bc4", "f5", "d3", "fxe4", "dxe4", "d6", "Ng5", "Nh6", "Qh5+", "g6", "Qf3", "Bg7", "Nf7", "Nxf7", "Bxf7+", "Kh8"],
+        "fen": "r1bqnrk1/pppp1ppp/7p/4P2Q/2B3n1/8/PPP2PPP/RNB2RK1 w - - 0 10",
+        "whiteWinRate": 100.0,
+        "blackWinRate": 0.0,
+        "drawRate": 0.0,
+        "description": "A forced mate involving smothered knight tactics.",
+        "solution": ["Nxf7"],
+        "computerResponse": [],
+        "playerColor": "white"
+      },
+      {
+        "id": 19,
+        "name": "Fried Liver Counter-Attack",
+        "moves": ["e4", "e5", "Nf3", "Nc6", "Bc4", "f5", "d3", "fxe4", "dxe4", "Nf6", "Ng5", "d6", "Nf7", "Kxf7", "Qh5+", "g6", "Qf3+", "Kg8", "Bc4+", "d5"],
+        "fen": "r1bqkb1r/pppp1ppp/8/4P3/3B2n1/8/PPP2PPP/RNBQK2R w KQkq - 0 7",
+        "whiteWinRate": 100.0,
+        "blackWinRate": 0.0,
+        "drawRate": 0.0,
+        "description": "A devastating counter-attack after the Fried Liver attempt.",
+        "solution": ["Bd5", "Nxf2", "Bxf7+", "Kxf7", "Ng5+", "Kg8", "Qb3+", "d5", "exd6+", "Be6", "Qxe6+", "Kf8", "Qf7#"],
+        "computerResponse": ["Nxf2", "Kxf7", "Kg8", "d5", "Be6", "Kf8"],
+        "playerColor": "white"
+      },
+      {
+        "id": 110,
+        "name": "Pawn Break Trap",
+        "moves": ["e4", "e5", "Nf3", "Nc6", "Bc4", "Be7", "d3", "d6", "Ng5", "h6", "Nf3", "Bg4", "h3", "Bh5", "g4", "Bg6", "h4", "h5"],
+        "fen": "r1bq1rk1/pppp1ppp/7n/7P/2B1P3/3P4/PPP2P2/RNB2RK1 b - - 0 7",
+        "whiteWinRate": 80.0,
+        "blackWinRate": 15.0,
+        "drawRate": 5.0,
+        "description": "A pawn storm trap that opens dangerous attacking lines.",
+        "solution": ["hxg5", "hxg5", "Nh7", "Qh5"],
+        "computerResponse": ["hxg5", "Nh7"],
+        "playerColor": "white"
+      },
+      {
+        "id": 111,
+        "name": "Bishop Pin Trap",
+        "moves": ["e4", "e5", "Nf3", "Nc6", "Bc4", "Be7", "d3", "d6", "Bg5", "Nf6", "Nc3", "O-O", "Qd2", "Re8", "O-O-O", "Bf8", "h4", "h6"],
+        "fen": "rnbk1b1r/ppqpn2p/3ppB2/2P5/4N3/2N5/PPP2PPP/R3K2R w KQ - 0 8",
+        "whiteWinRate": 85.0,
+        "blackWinRate": 12.0,
+        "drawRate": 3.0,
+        "description": "A tactical trap involving bishop pins and piece pressure.",
+        "solution": ["Bxf7+", "Kf8", "Be6"],
+        "computerResponse": ["Kf8"],
+        "playerColor": "white"
+      },
+      {
+        "id": 112,
+        "name": "Greek Defence Trap",
+        "moves": ["e4", "e5", "Nf3", "Nc6", "Bc4", "Be7", "d3", "d6", "Bg5", "f6", "Bh4", "g5", "Bg3", "h5", "h3", "Bg4", "Nbd2", "Qd7"],
+        "fen": "rnbq1rk1/pppp1ppp/3p4/4p3/2B1b3/3P1P2/PPP3PP/RNBQ1RK1 b - - 0 6",
+        "whiteWinRate": 5.0,
+        "blackWinRate": 90.0,
+        "drawRate": 5.0,
+        "description": "A dangerous counter-trap where Black gets a winning attack.",
+        "solution": ["Nd4", "Be3", "Nxf3+", "gxf3", "Bh3", "Re1", "Bxe3+", "fxe3", "Qg5+", "Qg2#"],
+        "computerResponse": ["Be3", "gxf3", "Re1", "fxe3", "Qg2#"],
+        "playerColor": "black"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Queen's Gambit Traps",
+    "moves": ["d4", "d5", "c4"],
+    "fen": "rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq c3 0 2",
+    "whiteWinRate": 68.8,
+    "blackWinRate": 22.7,
+    "drawRate": 8.5,
+    "popularity": 92,
+    "difficulty": "Intermediate",
+    "description": "Tactical traps that can arise in Queen's Gambit structures.",
+    "variations": [
+      {
+        "id": 21,
+        "name": "Elephant Trap",
+        "moves": ["d4", "d5", "c4", "e6", "Nc3", "Nf6", "Bg5", "Nbd7", "cxd5", "exd5", "Nxd5", "Nxd5", "Bxd8", "Bb4+", "Qd2", "Bxd2+", "Kxd2", "Kxd8"],
+        "fen": "r1b1k2r/pppn1ppp/8/3n1B2/3P4/8/PP2PPPP/R3KBNR w KQkq - 0 8",
+        "whiteWinRate": 85.0,
+        "blackWinRate": 10.0,
+        "drawRate": 5.0,
+        "description": "A trap where Black can win White's queen if White plays carelessly."
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Sicilian Defense Traps",
+    "moves": ["e4", "c5"],
+    "fen": "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2",
+    "whiteWinRate": 72.2,
+    "blackWinRate": 18.1,
+    "drawRate": 9.7,
+    "popularity": 88,
+    "difficulty": "Advanced",
+    "description": "Dangerous tactical shots that can occur in Sicilian Defense openings.",
+    "variations": [
+      {
+        "id": 31,
+        "name": "Siberian Trap",
+        "moves": ["e4", "c5", "d4", "cxd4", "Qxd4", "Nc6", "Qd2", "g6", "b3", "Bh6"],
+        "fen": "r1bqk1nr/pp1pppbp/2n3p1/8/4P3/1P6/P1PQ1PPP/RNB1KBNR w KQkq - 2 6",
+        "whiteWinRate": 90.0,
+        "blackWinRate": 5.0,
+        "drawRate": 5.0,
+        "description": "A trap that catches Black's queen if they're not careful with piece development."
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "French Defense Traps",
+    "moves": ["e4", "e6"],
+    "fen": "rnbqkbnr/pppp1ppp/4p3/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+    "whiteWinRate": 69.7,
+    "blackWinRate": 19.4,
+    "drawRate": 10.9,
+    "popularity": 65,
+    "difficulty": "Intermediate",
+    "description": "Tactical traps that can arise in French Defense structures.",
+    "variations": [
+      {
+        "id": 41,
+        "name": "Milner-Barry Trap",
+        "moves": ["e4", "e6", "d4", "d5", "e5", "c5", "c3", "Nc6", "Nf3", "Qb6", "a3", "c4"],
+        "fen": "r1b1kbnr/pp3ppp/1qn1p3/3pP3/2pP4/P1P2N2/1P3PPP/RNBQKB1R w KQkq - 0 7",
+        "whiteWinRate": 80.0,
+        "blackWinRate": 15.0,
+        "drawRate": 5.0,
+        "description": "A positional trap where Black's queen gets trapped on the queenside."
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Ruy Lopez Traps",
+    "moves": ["e4", "e5", "Nf3", "Nc6", "Bb5"],
+    "fen": "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3",
+    "whiteWinRate": 76.9,
+    "blackWinRate": 16.8,
+    "drawRate": 6.3,
+    "popularity": 78,
+    "difficulty": "Intermediate",
+    "description": "Classic traps from one of the oldest and most respected openings.",
+    "variations": [
+      {
+        "id": 51,
+        "name": "Noah's Ark Trap",
+        "moves": ["e4", "e5", "Nf3", "Nc6", "Bb5", "a6", "Ba4", "d6", "d4", "b5", "Bb3", "Nxd4", "Nxd4", "exd4", "Qxd4", "c5"],
+        "fen": "r1bqkbnr/2p2ppp/p2p4/1p1p4/3QP3/1B6/PPP2PPP/RNB1K2R w KQkq c6 0 8",
+        "whiteWinRate": 95.0,
+        "blackWinRate": 3.0,
+        "drawRate": 2.0,
+        "description": "A famous trap where Black can win White's bishop with precise play."
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "name": "King's Indian Traps",
+    "moves": ["d4", "Nf6", "c4", "g6"],
+    "fen": "rnbqkb1r/pppppp1p/5np1/8/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3",
+    "whiteWinRate": 71.3,
+    "blackWinRate": 20.2,
+    "drawRate": 8.5,
+    "popularity": 71,
+    "difficulty": "Advanced",
+    "description": "Sharp tactical traps in the King's Indian Defense.",
+    "variations": [
+      {
+        "id": 61,
+        "name": "Petrosian Trap",
+        "moves": ["d4", "Nf6", "c4", "g6", "Nc3", "Bg7", "e4", "d6", "f3", "O-O", "Be3", "c5"],
+        "fen": "rnbq1rk1/pp2ppbp/3p1np1/2p5/2PPP3/2N1BP2/PP3PPP/R2QKBNR w KQ c6 0 7",
+        "whiteWinRate": 85.0,
+        "blackWinRate": 10.0,
+        "drawRate": 5.0,
+        "description": "A positional trap that can win material if Black plays inaccurately."
+      }
+    ]
+  }
+] 
