@@ -5,15 +5,10 @@ import { Chessboard } from "react-chessboard";
 import { Chess, Square } from "chess.js";
 
 interface Puzzle {
-  id: number;
-  elo: number;
-  type: string;
-  difficulty: string;
   fen: string;
-  solution: string[];
-  computerResponse: string[];
-  playerColor: string;
-  completed: boolean;
+  moves: string; // Space-separated moves in "from-to" format like "f2g3 e6e7 b2b1"
+  rating: number;
+  type: string;
 }
 
 interface ChessBoardProps {
@@ -25,130 +20,148 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
   const [game, setGame] = useState(new Chess(position));
   const [gamePosition, setGamePosition] = useState(position);
   const [moveHistory, setMoveHistory] = useState<string[]>([]);
-  const [playerMoveCount, setPlayerMoveCount] = useState(0);
-  const [totalMoveIndex, setTotalMoveIndex] = useState(0);
+  const [currentMoveIndex, setCurrentMoveIndex] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
-  const [message, setMessage] = useState(`${puzzle.playerColor === 'white' ? 'White' : 'Black'} to play - Find the best move!`);
+  const [message, setMessage] = useState("Computer is making the first move...");
   const [showHint, setShowHint] = useState(false);
   const [hintArrow, setHintArrow] = useState<[Square, Square] | null>(null);
-  const [isPlayerTurn, setIsPlayerTurn] = useState(true);
+  const [isPlayerTurn, setIsPlayerTurn] = useState(false);
+  const [playerColor, setPlayerColor] = useState<'white' | 'black'>('white');
+
+  // Parse moves string into array
+  const puzzleMoves = puzzle.moves.split(' ').filter(move => move.trim() !== '');
 
   useEffect(() => {
-    const newGame = new Chess(position);
-    setGame(newGame);
-    setGamePosition(position);
-    setMoveHistory([]);
-    setPlayerMoveCount(0);
-    setTotalMoveIndex(0);
-    setIsComplete(false);
-    setMessage(`${puzzle.playerColor === 'white' ? 'White' : 'Black'} to play - Find the best move!`);
-    setShowHint(false);
-    setHintArrow(null);
-    setIsPlayerTurn(true);
-
-    // For puzzles, player always moves first regardless of color
-    // No automatic computer first move needed
-  }, [position, puzzle.id, puzzle.playerColor]);
-
-  function makeComputerMove(currentPlayerMoveCount?: number, gameCopy?: Chess) {
-    // Use the passed parameter or fall back to state (for reset scenarios)
-    const actualPlayerMoveCount = currentPlayerMoveCount ?? playerMoveCount;
+    // Clear any pending timeouts to prevent state conflicts
+    const timeoutIds: NodeJS.Timeout[] = [];
     
-    // Check if there's a computer response available
-    // Computer responses are indexed by the player move they're responding to (0-based)
-    // Player makes move 1 (playerMoveCount=1), computer responds with response[0]
-    const computerResponseIndex = actualPlayerMoveCount - 1;
-    console.log(`makeComputerMove called with playerMoveCount: ${actualPlayerMoveCount}, computerResponseIndex: ${computerResponseIndex}`);
-    
-    if (computerResponseIndex >= 0 && computerResponseIndex < puzzle.computerResponse.length) {
-      const computerMoveStr = puzzle.computerResponse[computerResponseIndex];
-      console.log(`Attempting computer move: ${computerMoveStr}`);
-      console.log(`Current position: ${gameCopy?.fen() || game.fen()}`);
+    const resetPuzzleState = () => {
+      const newGame = new Chess(position);
+      setGame(newGame);
+      setGamePosition(position);
+      setMoveHistory([]);
+      setCurrentMoveIndex(0);
+      setIsComplete(false);
+      setShowHint(false);
+      setHintArrow(null);
+      setIsPlayerTurn(false);
+      setMessage("Computer is making the first move...");
       
-      // Create a copy of the game to make the move
-      const gameCopyToUse = gameCopy || new Chess(game.fen());
+      // Determine player color based on whose turn it is to move
+      // If it's Black's turn in the FEN, then player is White (computer is Black)
+      // If it's White's turn in the FEN, then player is Black (computer is White)
+      const currentTurn = newGame.turn();
+      console.log("currentTurn", currentTurn);
+      console.log("FEN position:", position);
+      const determinedPlayerColor = currentTurn === 'b' ? 'white' : 'black';
+      console.log("determinedPlayerColor", determinedPlayerColor);
+      setPlayerColor(determinedPlayerColor);
       
-      try {
-        // Try to make the move directly as SAN first
-        let result = gameCopyToUse.move(computerMoveStr);
-        
-        if (!result && computerMoveStr.length >= 4) {
-          // If SAN fails, try coordinate notation
-          const from = computerMoveStr.substring(0, 2);
-          const to = computerMoveStr.substring(2, 4);
-          result = gameCopyToUse.move({ from, to });
-        }
-        
-        if (result) {
-          console.log(`Computer move successful: ${result.san}`);
-          setGame(gameCopyToUse);
-          setGamePosition(gameCopyToUse.fen());
-          setMoveHistory(prev => [...prev, result.san]);
-          setTotalMoveIndex(prev => prev + 1);
-          
-          // Check if puzzle is complete
-          if (actualPlayerMoveCount >= puzzle.solution.length) {
-            setMessage("🎉 Puzzle completed! Well done!");
-            setIsComplete(true);
-            setIsPlayerTurn(false);
-          } else {
-            setMessage(`${puzzle.playerColor === 'white' ? 'White' : 'Black'} to play - Continue the sequence!`);
-            setIsPlayerTurn(true);
-          }
-          return;
-        } else {
-          console.error(`Failed to execute computer move: ${computerMoveStr}`);
-        }
-      } catch (error) {
-        console.error(`Error executing computer move: ${computerMoveStr}`, error);
+      // Computer always makes the first move
+      if (puzzleMoves.length > 0) {
+        const timeoutId = setTimeout(() => {
+          makeComputerMove(0, newGame);
+        }, 1000);
+        timeoutIds.push(timeoutId);
       }
       
-      // If computer move failed, continue with player
-      setMessage(`${puzzle.playerColor === 'white' ? 'White' : 'Black'} to play - Continue the sequence!`);
-      setIsPlayerTurn(true);
-    } else {
-      // No computer response available, continue with player
-      setMessage(`${puzzle.playerColor === 'white' ? 'White' : 'Black'} to play - Continue the sequence!`);
-      setIsPlayerTurn(true);
+      // Update message to show correct player color
+      setTimeout(() => {
+        setMessage(`${determinedPlayerColor === 'white' ? 'White' : 'Black'} to play - Find the best move!`);
+      }, 1500); // Show after computer move completes
+    };
+    
+    resetPuzzleState();
+    
+    // Cleanup function to clear timeouts when component unmounts or dependencies change
+    return () => {
+      timeoutIds.forEach(id => clearTimeout(id));
+    };
+  }, [position, puzzle.fen, puzzle.moves]); // Use puzzle.fen and puzzle.moves instead of puzzle.id
+
+  function makeComputerMove(moveIndex: number, gameCopy?: Chess) {
+    console.log(`Making computer move ${moveIndex}: ${puzzleMoves[moveIndex]}`);
+    
+    if (moveIndex >= puzzleMoves.length) {
+      console.log("No more computer moves available");
+      return;
+    }
+    
+    const computerMoveStr = puzzleMoves[moveIndex];
+    const gameToUse = gameCopy || new Chess(game.fen());
+    
+    try {
+      // Parse the move in "from-to" format (e.g., "f2g3")
+      const from = computerMoveStr.substring(0, 2);
+      const to = computerMoveStr.substring(2, 4);
+      let promotion = computerMoveStr.length > 4 ? computerMoveStr.substring(4) : undefined;
+      
+      // Handle promotion notation
+      if (promotion) {
+        // Convert promotion letter to lowercase if needed
+        promotion = promotion.toLowerCase();
+      }
+      
+      const moveObj: { from: string; to: string; promotion?: string } = { from, to };
+      if (promotion) {
+        moveObj.promotion = promotion;
+      }
+      
+      const result = gameToUse.move(moveObj);
+      
+      if (result) {
+        console.log(`Computer move successful: ${result.san}`);
+        setGame(gameToUse);
+        setGamePosition(gameToUse.fen());
+        setMoveHistory(prev => [...prev, result.san]);
+        setCurrentMoveIndex(prev => prev + 1);
+        
+        // Check if puzzle is complete (all moves played)
+        if (moveIndex + 1 >= puzzleMoves.length) {
+          setMessage("🎉 Puzzle completed! Well done!");
+          setIsComplete(true);
+          setIsPlayerTurn(false);
+        } else {
+          // It's now player's turn
+          setMessage(`${playerColor === 'white' ? 'White' : 'Black'} to play - Find the best move!`);
+          setIsPlayerTurn(true);
+        }
+      } else {
+        console.error(`Failed to execute computer move: ${computerMoveStr}`);
+        setMessage("Error in computer move. Please reset the puzzle.");
+      }
+    } catch (error) {
+      console.error(`Error executing computer move: ${computerMoveStr}`, error);
+      setMessage("Error in computer move. Please reset the puzzle.");
     }
   }
 
   function showHintArrow() {
-    if (totalMoveIndex < puzzle.solution.length && !isComplete && isPlayerTurn) {
-      // The solution array contains ALL moves (player + computer), so use totalMoveIndex
-      const currentExpectedMove = puzzle.solution[totalMoveIndex];
-      console.log(`Showing hint for move: ${currentExpectedMove}, Total Move Index: ${totalMoveIndex}`);
-      
-      // Create a test game to get move details
-      const testGame = new Chess(game.fen());
+    if (currentMoveIndex < puzzleMoves.length && !isComplete && isPlayerTurn) {
+      const currentExpectedMove = puzzleMoves[currentMoveIndex];
+      console.log('=== HINT DEBUG ===');
+      console.log(`Current Move Index: ${currentMoveIndex}`);
+      console.log(`Showing hint for move: "${currentExpectedMove}"`);
+      console.log(`Puzzle moves array:`, puzzleMoves);
+      console.log('==================');
       
       try {
-        // Try to make the move to get the from/to squares
-        let result = testGame.move(currentExpectedMove);
+        // Parse the expected move
+        const from = currentExpectedMove.substring(0, 2);
+        const to = currentExpectedMove.substring(2, 4);
         
-        if (!result && currentExpectedMove.length >= 4) {
-          // If SAN fails, try coordinate notation
-          const from = currentExpectedMove.substring(0, 2);
-          const to = currentExpectedMove.substring(2, 4);
-          result = testGame.move({ from, to });
-        }
+        setHintArrow([from as Square, to as Square]);
+        setShowHint(true);
+        setMessage("💡 Hint: Look at the highlighted move!");
         
-        if (result) {
-          setHintArrow([result.from as Square, result.to as Square]);
-          setShowHint(true);
-          setMessage("💡 Hint: Look at the highlighted move!");
-          
-          // Hide hint after 5 seconds
-          setTimeout(() => {
-            setHintArrow(null);
-            setShowHint(false);
-            if (!isComplete && isPlayerTurn) {
-              setMessage(`${puzzle.playerColor === 'white' ? 'White' : 'Black'} to play - Find the best move!`);
-            }
-          }, 5000);
-        } else {
-          console.error(`Failed to parse hint move: ${currentExpectedMove}`);
-        }
+        // Hide hint after 5 seconds
+        setTimeout(() => {
+          setHintArrow(null);
+          setShowHint(false);
+          if (!isComplete && isPlayerTurn) {
+            setMessage(`${playerColor === 'white' ? 'White' : 'Black'} to play - Find the best move!`);
+          }
+        }, 5000);
       } catch (error) {
         console.error(`Error parsing hint move: ${currentExpectedMove}`, error);
       }
@@ -162,9 +175,14 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
     
     // Check if the piece belongs to the player
     const piece = gameCopy.get(move.from as Square);
-    if (!piece || piece.color !== (puzzle.playerColor === 'white' ? 'w' : 'b')) {
+    if (!piece || piece.color !== (playerColor === 'white' ? 'w' : 'b')) {
       return null; // Not player's piece
     }
+
+    console.log('=== BEFORE CHESS.JS MOVE ===');
+    console.log(`Input move object:`, move);
+    console.log(`Move.from: "${move.from}", Move.to: "${move.to}", Move.promotion: "${move.promotion}"`);
+    console.log('============================');
 
     const result = gameCopy.move(move);
     
@@ -172,55 +190,57 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
       return null; // Invalid move
     }
     
+    console.log('=== AFTER CHESS.JS MOVE ===');
+    console.log(`Chess.js result object:`, result);
+    console.log(`Result.from: "${result.from}", Result.to: "${result.to}"`);
+    console.log(`Result.promotion: "${result.promotion}"`);
+    console.log('===========================');
+    
     // Clear hint when user makes a move
     setHintArrow(null);
     setShowHint(false);
     
-    // Check if the move matches the expected solution
-    // The solution array contains ALL moves (player + computer), so use totalMoveIndex
-    const expectedMove = puzzle.solution[totalMoveIndex];
-    console.log(`Player move: ${result.san}, Expected: ${expectedMove}, Total Move Index: ${totalMoveIndex}`);
+    // Check if the move matches the expected move
+    const expectedMove = puzzleMoves[currentMoveIndex];
+    const playerMoveStr = move.from + move.to + (move.promotion ? move.promotion : '');
     
-    // Check multiple formats: SAN and coordinate notation
-    const isCorrectMove = expectedMove === result.san || 
-                         expectedMove === (result.from + result.to) ||
-                         expectedMove === result.from + result.to + (result.promotion || '');
+    console.log('=== MOVE COMPARISON DEBUG ===');
+    console.log(`Current Move Index: ${currentMoveIndex}`);
+    console.log(`Expected Move: "${expectedMove}"`);
+    console.log(`Player Move String: "${playerMoveStr}"`);
+    console.log(`Player Move Object:`, move);
+    console.log(`Move promotion value: "${move.promotion}"`);
+    console.log(`Expected Move Length: ${expectedMove.length}`);
+    console.log(`Player Move String Length: ${playerMoveStr.length}`);
+    console.log(`Are they equal? ${expectedMove === playerMoveStr}`);
+    console.log('=============================');
+    
+    // Check if the move matches exactly
+    const isCorrectMove = expectedMove === playerMoveStr;
     
     if (isCorrectMove) {
-      console.log(`✅ Correct move! Incrementing playerMoveCount from ${playerMoveCount} to ${playerMoveCount + 1}`);
+      console.log(`✅ Correct move!`);
       
       // Update game state
       setGame(gameCopy);
       setGamePosition(gameCopy.fen());
       setMoveHistory(prev => [...prev, result.san]);
-      setPlayerMoveCount(prev => prev + 1);
-      setTotalMoveIndex(prev => prev + 1);
+      setCurrentMoveIndex(prev => prev + 1);
       setIsPlayerTurn(false);
       
-      // Check if puzzle is complete (no more moves needed)
-      if (totalMoveIndex + 1 >= puzzle.solution.length) {
+      // Check if puzzle is complete
+      if (currentMoveIndex + 1 >= puzzleMoves.length) {
         setMessage("🎉 Puzzle completed! Well done!");
         setIsComplete(true);
       } else {
-        // Check if computer should respond
-        const newPlayerMoveCount = playerMoveCount + 1; // Calculate the new value
-        // Computer responses are indexed by the player move they're responding to (0-based)
-        // First player move (index 0) gets computer response 0, etc.
-        const computerResponseIndex = playerMoveCount; // Use current playerMoveCount as index
-        if (computerResponseIndex >= 0 && computerResponseIndex < puzzle.computerResponse.length) {
-          setMessage("✅ Correct! Computer is responding...");
-          // Make computer move after a short delay, passing the updated game state
-          setTimeout(() => {
-            makeComputerMove(newPlayerMoveCount, gameCopy); // Pass the correct updated value
-          }, 1000);
-        } else {
-          // No computer response, continue with player
-          setMessage(`${puzzle.playerColor === 'white' ? 'White' : 'Black'} to play - Continue the sequence!`);
-          setIsPlayerTurn(true);
-        }
+        // Computer should make the next move
+        setMessage("✅ Correct! Computer is responding...");
+        setTimeout(() => {
+          makeComputerMove(currentMoveIndex + 1, gameCopy);
+        }, 1000);
       }
     } else {
-      console.log(`❌ Incorrect move! Player: ${result.san}, Expected: ${expectedMove}`);
+      console.log(`❌ Incorrect move! Player: "${playerMoveStr}", Expected: "${expectedMove}"`);
       setMessage("❌ Not the best move. Try again!");
       return null;
     }
@@ -229,10 +249,23 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
   }
 
   function onDrop(sourceSquare: string, targetSquare: string) {
+    // Check if this is a pawn promotion move
+    const piece = game.get(sourceSquare as Square);
+    const isPromotion = piece?.type === 'p' && 
+      ((piece.color === 'w' && targetSquare[1] === '8') || 
+       (piece.color === 'b' && targetSquare[1] === '1'));
+    
+    console.log('=== ON DROP DEBUG ===');
+    console.log(`Source: ${sourceSquare}, Target: ${targetSquare}`);
+    console.log(`Piece:`, piece);
+    console.log(`Is Promotion: ${isPromotion}`);
+    console.log(`Promotion value: ${isPromotion ? "q" : undefined}`);
+    console.log('====================');
+    
     const move = makeAMove({
       from: sourceSquare,
       to: targetSquare,
-      promotion: "q", // Always promote to queen for simplicity
+      promotion: isPromotion ? "q" : undefined, // Only promote when it's actually a pawn promotion
     });
 
     if (move === null) return false;
@@ -244,16 +277,24 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
     setGame(newGame);
     setGamePosition(position);
     setMoveHistory([]);
-    setPlayerMoveCount(0);
-    setTotalMoveIndex(0);
+    setCurrentMoveIndex(0);
     setIsComplete(false);
-    setMessage(`${puzzle.playerColor === 'white' ? 'White' : 'Black'} to play - Find the best move!`);
     setShowHint(false);
     setHintArrow(null);
-    setIsPlayerTurn(true);
-
-    // For puzzles, player always moves first regardless of color
-    // No automatic computer first move needed
+    setIsPlayerTurn(false);
+    setMessage("Computer is making the first move...");
+    
+    // Determine player color based on whose turn it is to move
+    const currentTurn = newGame.turn();
+    const determinedPlayerColor = currentTurn === 'b' ? 'white' : 'black';
+    setPlayerColor(determinedPlayerColor);
+    
+    // Computer always makes the first move
+    if (puzzleMoves.length > 0) {
+      setTimeout(() => {
+        makeComputerMove(0, newGame);
+      }, 1000);
+    }
   }
 
   return (
@@ -286,6 +327,20 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
           </div>
         </div>
         
+        {/* Progress indicator */}
+        <div className="mb-3">
+          <div className="flex justify-between text-sm text-gray-600 mb-1">
+            <span>Progress</span>
+            <span>{currentMoveIndex}/{puzzleMoves.length} moves</span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <div 
+              className="bg-blue-500 h-2 rounded-full transition-all duration-300" 
+              style={{ width: `${Math.min(100, (currentMoveIndex / puzzleMoves.length) * 100)}%` }}
+            ></div>
+          </div>
+        </div>
+        
         {moveHistory.length > 0 && (
           <div className="text-sm text-gray-600">
             <strong>Moves:</strong> {moveHistory.join(", ")}
@@ -299,7 +354,7 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
           <Chessboard
             position={gamePosition}
             onPieceDrop={onDrop}
-            boardOrientation={puzzle.playerColor === 'white' ? 'white' : 'black'}
+            boardOrientation={playerColor}
             boardWidth={Math.min(600, typeof window !== 'undefined' ? window.innerWidth - 400 : 600)}
             customBoardStyle={{
               borderRadius: "8px",
@@ -313,7 +368,7 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
         </div>
 
         {/* Puzzle Information Panel */}
-        <div className="w-80 bg-white p-6 rounded-lg shadow-lg">
+        <div className="w-[30em] bg-white p-6 rounded-lg shadow-lg">
           <h3 className="text-xl font-semibold text-gray-800 mb-4">Puzzle Information</h3>
           
           <div className="space-y-4">
@@ -325,31 +380,20 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
             </div>
             
             <div className="flex justify-between items-center">
-              <span className="text-gray-600 font-medium">Difficulty:</span>
-              <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                puzzle.difficulty === 'Beginner' ? 'bg-green-100 text-green-800' :
-                puzzle.difficulty === 'Intermediate' ? 'bg-yellow-100 text-yellow-800' :
-                'bg-red-100 text-red-800'
-              }`}>
-                {puzzle.difficulty}
-              </span>
-            </div>
-            
-            <div className="flex justify-between items-center">
               <span className="text-gray-600 font-medium">Rating:</span>
               <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">
-                {puzzle.elo}
+                {puzzle.rating}
               </span>
             </div>
             
             <div className="flex justify-between items-center">
               <span className="text-gray-600 font-medium">Playing as:</span>
               <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                puzzle.playerColor === 'white' 
+                playerColor === 'white' 
                   ? 'bg-gray-100 text-gray-800' 
                   : 'bg-gray-800 text-white'
               }`}>
-                {puzzle.playerColor === 'white' ? '⚪ White' : '⚫ Black'}
+                {playerColor === 'white' ? '⚪ White' : '⚫ Black'}
               </span>
             </div>
             
@@ -360,22 +404,6 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
               }`}>
                 {isComplete ? '✅ Completed' : '🎯 In Progress'}
               </span>
-            </div>
-            
-            <div className="pt-4 border-t border-gray-200">
-              <span className="text-gray-600 font-medium">Progress:</span>
-              <div className="mt-2">
-                <div className="flex justify-between text-sm text-gray-600 mb-1">
-                  <span>Moves completed</span>
-                  <span>{Math.floor(totalMoveIndex / 2)}/{Math.ceil(puzzle.solution.length / 2)}</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-blue-500 h-2 rounded-full transition-all duration-300" 
-                    style={{ width: `${Math.min(100, (totalMoveIndex / puzzle.solution.length) * 100)}%` }}
-                  ></div>
-                </div>
-              </div>
             </div>
           </div>
         </div>

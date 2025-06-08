@@ -223,7 +223,7 @@ export default function OpeningBoard({ openingLine, playerSide }: OpeningBoardPr
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div className="w-full max-w-5xl mx-auto">
       <div className="mb-4 p-4 bg-white rounded-lg shadow-sm">
         <div className="flex justify-between items-center mb-2">
           <div className={`text-lg font-semibold ${isComplete ? 'text-green-600' : showHint ? 'text-blue-600' : 'text-gray-700'}`}>
@@ -273,62 +273,70 @@ export default function OpeningBoard({ openingLine, playerSide }: OpeningBoardPr
         </div>
       </div>
 
-      <div className="bg-white p-4 rounded-lg shadow-lg">
-        <Chessboard
-          position={gamePosition}
-          onPieceDrop={onDrop}
-          boardOrientation={playerSide}
-          boardWidth={Math.min(600, typeof window !== 'undefined' ? window.innerWidth - 100 : 600)}
-          customBoardStyle={{
-            borderRadius: "8px",
-            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-          }}
-          customDarkSquareStyle={{ backgroundColor: "#779952" }}
-          customLightSquareStyle={{ backgroundColor: "#edeed1" }}
-          customArrows={hintArrow ? [hintArrow] : []}
-          customArrowColor="rgb(255, 170, 0)"
-        />
-      </div>
+      <div className="flex gap-6">
+        {/* Chess Board */}
+        <div className="bg-white p-4 rounded-lg shadow-lg">
+          <Chessboard
+            position={gamePosition}
+            onPieceDrop={onDrop}
+            boardOrientation={playerSide}
+            boardWidth={700}
+            customBoardStyle={{
+              borderRadius: "8px",
+              boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+            }}
+            customDarkSquareStyle={{ backgroundColor: "#779952" }}
+            customLightSquareStyle={{ backgroundColor: "#edeed1" }}
+            customArrows={hintArrow ? [hintArrow] : []}
+            customArrowColor="rgb(255, 170, 0)"
+          />
+        </div>
 
-      <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-        <h3 className="font-semibold text-gray-800 mb-2">Opening Information</h3>
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div>
-            <span className="text-gray-600">Opening:</span>
-            <span className="ml-2 font-medium">{openingLine.name}</span>
+        {/* Opening Information Panel */}
+        <div className="w-80 p-4 bg-gray-50 rounded-lg flex-shrink-0">
+          <h3 className="font-semibold text-gray-800 mb-3">Opening Information</h3>
+          <div className="space-y-3 text-sm">
+            <div>
+              <span className="text-gray-600">Opening:</span>
+              <div className="font-medium text-gray-800 mt-1">{openingLine.name}</div>
+            </div>
+            <div>
+              <span className="text-gray-600">Difficulty:</span>
+              <div className="font-medium text-gray-800 mt-1">{openingLine.difficulty}</div>
+            </div>
+            <div>
+              <span className="text-gray-600">Playing As:</span>
+              <div className={`font-medium mt-1 ${playerSide === 'white' ? 'text-gray-800' : 'text-gray-600'}`}>
+                {playerSide === 'white' ? '⚪ White' : '⚫ Black'}
+              </div>
+            </div>
+            <div>
+              <span className="text-gray-600">Progress:</span>
+              <div className="font-medium text-gray-800 mt-1">
+                {currentMoveIndex}/{openingLine.moves.length} moves
+              </div>
+            </div>
           </div>
-          <div>
-            <span className="text-gray-600">Difficulty:</span>
-            <span className="ml-2 font-medium">{openingLine.difficulty}</span>
+          
+          <div className="mt-4 pt-3 border-t border-gray-200">
+            <span className="text-gray-600 text-sm">Description:</span>
+            <p className="text-sm text-gray-700 mt-1">{openingLine.description}</p>
           </div>
-          <div>
-            <span className="text-gray-600">Playing As:</span>
-            <span className={`ml-2 font-medium ${playerSide === 'white' ? 'text-gray-800' : 'text-gray-600'}`}>
-              {playerSide === 'white' ? '⚪ White' : '⚫ Black'}
-            </span>
+          
+          <div className="mt-4 pt-3 border-t border-gray-200">
+            <span className="text-gray-600 text-sm mb-2 block">Statistics:</span>
+            <div className="flex flex-col space-y-2 text-xs">
+              <span className="bg-green-100 px-2 py-1 rounded text-green-800">
+                White: {openingLine.whiteWinRate}%
+              </span>
+              <span className="bg-red-100 px-2 py-1 rounded text-red-800">
+                Black: {openingLine.blackWinRate}%
+              </span>
+              <span className="bg-gray-100 px-2 py-1 rounded text-gray-800">
+                Draws: {openingLine.drawRate}%
+              </span>
+            </div>
           </div>
-          <div>
-            <span className="text-gray-600">Progress:</span>
-            <span className="ml-2 font-medium">
-              {currentMoveIndex}/{openingLine.moves.length} moves
-            </span>
-          </div>
-        </div>
-        
-        <div className="mt-3 pt-3 border-t border-gray-200">
-          <p className="text-sm text-gray-600">{openingLine.description}</p>
-        </div>
-        
-        <div className="mt-3 flex space-x-4 text-xs">
-          <span className="bg-green-100 px-2 py-1 rounded text-green-800">
-            White: {openingLine.whiteWinRate}%
-          </span>
-          <span className="bg-red-100 px-2 py-1 rounded text-red-800">
-            Black: {openingLine.blackWinRate}%
-          </span>
-          <span className="bg-gray-100 px-2 py-1 rounded text-gray-800">
-            Draws: {openingLine.drawRate}%
-          </span>
         </div>
       </div>
     </div>
