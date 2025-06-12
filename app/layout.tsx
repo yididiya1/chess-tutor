@@ -3,6 +3,8 @@ import { Exo_2 } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import ThemeSwitcher from "./components/ThemeSwitcher";
+import SessionProvider from "./components/SessionProvider";
+import Navbar from "./components/Navbar";
 
 const exo2 = Exo_2({
   variable: "--font-exo2",
@@ -25,13 +27,18 @@ export default function RootLayout({
       <body
         className={`${exo2.variable} font-exo2 antialiased`}
       >
-        <ThemeProvider>
-          {/* Theme Switcher - Fixed position */}
-          <div className="fixed top-4 right-4 z-50">
-            <ThemeSwitcher />
-          </div>
-          {children}
-        </ThemeProvider>
+        <SessionProvider>
+          <ThemeProvider>
+            <Navbar />
+            {/* Theme Switcher positioned in top right */}
+            <div className="fixed top-20 right-4 z-40">
+              <ThemeSwitcher />
+            </div>
+            <div className="pt-16">
+              {children}
+            </div>
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   );
