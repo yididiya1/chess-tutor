@@ -16,6 +16,15 @@ export interface OpeningProgress {
   lastReviewed: Date
 }
 
+interface UserStatsUpdate {
+  totalPuzzlesSolved?: { increment: number }
+  totalOpeningsLearned?: { increment: number }
+  currentStreak?: number
+  bestStreak?: number
+  averageRating?: number
+  totalTimeSpent?: { increment: number }
+}
+
 export class UserProgressTracker {
   private userId: string
 
@@ -137,18 +146,28 @@ export class UserProgressTracker {
     })
   }
 
-  private async updateUserStats(data: any) {
+  private async updateUserStats(data: UserStatsUpdate) {
+    // Separate update and create data since they have different structures
+    const updateData = {
+      ...data,
+      lastActiveDate: new Date(),
+    }
+    
+    const createData = {
+      userId: this.userId,
+      lastActiveDate: new Date(),
+      totalPuzzlesSolved: data.totalPuzzlesSolved?.increment || 0,
+      totalOpeningsLearned: data.totalOpeningsLearned?.increment || 0,
+      currentStreak: data.currentStreak || 0,
+      bestStreak: data.bestStreak || 0,
+      averageRating: data.averageRating || 0,
+      totalTimeSpent: data.totalTimeSpent?.increment || 0,
+    }
+
     await prisma.userStats.upsert({
       where: { userId: this.userId },
-      update: {
-        ...data,
-        lastActiveDate: new Date(),
-      },
-      create: {
-        userId: this.userId,
-        lastActiveDate: new Date(),
-        ...data,
-      },
+      update: updateData,
+      create: createData,
     })
   }
 
