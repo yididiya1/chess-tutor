@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Chessboard } from "react-chessboard";
 import { Chess, Square } from "chess.js";
+import { useUserProgress } from "@/hooks/useUserProgress";
 
 interface Puzzle {
   fen: string;
@@ -27,6 +28,9 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
   const [hintArrow, setHintArrow] = useState<[Square, Square] | null>(null);
   const [isPlayerTurn, setIsPlayerTurn] = useState(false);
   const [playerColor, setPlayerColor] = useState<'white' | 'black'>('white');
+  const [startTime, setStartTime] = useState<Date>(new Date());
+  
+  const { updatePuzzleProgress } = useUserProgress();
 
   // Parse moves string into array
   const puzzleMoves = puzzle.moves.split(' ').filter(move => move.trim() !== '');
@@ -46,6 +50,7 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
       setHintArrow(null);
       setIsPlayerTurn(false);
       setMessage("Computer is making the first move...");
+      setStartTime(new Date()); // Reset timer when puzzle starts
       
       // Determine player color based on whose turn it is to move
       // If it's Black's turn in the FEN, then player is White (computer is Black)
@@ -118,9 +123,17 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
         
         // Check if puzzle is complete (all moves played)
         if (moveIndex + 1 >= puzzleMoves.length) {
+          const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
           setMessage("🎉 Puzzle completed! Well done!");
           setIsComplete(true);
           setIsPlayerTurn(false);
+          
+          // Track puzzle completion
+          updatePuzzleProgress({
+            puzzleId: puzzle.fen, // Using FEN as unique puzzle ID
+            solved: true,
+            timeSpent
+          }).catch(error => console.error('Failed to track puzzle progress:', error));
         } else {
           // It's now player's turn
           setMessage(`${playerColor === 'white' ? 'White' : 'Black'} to play - Find the best move!`);
@@ -230,8 +243,16 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
       
       // Check if puzzle is complete
       if (currentMoveIndex + 1 >= puzzleMoves.length) {
+        const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
         setMessage("🎉 Puzzle completed! Well done!");
         setIsComplete(true);
+        
+        // Track puzzle completion
+        updatePuzzleProgress({
+          puzzleId: puzzle.fen, // Using FEN as unique puzzle ID
+          solved: true,
+          timeSpent
+        }).catch(error => console.error('Failed to track puzzle progress:', error));
       } else {
         // Computer should make the next move
         setMessage("✅ Correct! Computer is responding...");
@@ -283,6 +304,7 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
     setHintArrow(null);
     setIsPlayerTurn(false);
     setMessage("Computer is making the first move...");
+    setStartTime(new Date()); // Reset timer when puzzle resets
     
     // Determine player color based on whose turn it is to move
     const currentTurn = newGame.turn();
