@@ -4,122 +4,197 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222.2 84% 4.9%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222.2 84% 4.9%;
-    --destructive: 0 84.2% 60.2%;
+    /* ── Gamistic Dark Chess Theme ─────────────────────────── */
+    --background: 222 47% 5%;
+    --foreground: 210 40% 92%;
+    --card: 222 40% 8%;
+    --card-foreground: 210 40% 92%;
+    --popover: 222 40% 8%;
+    --popover-foreground: 210 40% 92%;
+    --primary: 43 96% 56%;
+    --primary-foreground: 222 47% 5%;
+    --secondary: 222 30% 14%;
+    --secondary-foreground: 210 40% 85%;
+    --muted: 222 30% 12%;
+    --muted-foreground: 215 20% 55%;
+    --accent: 43 96% 56%;
+    --accent-foreground: 222 47% 5%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    --border: 222 30% 16%;
+    --input: 222 30% 14%;
+    --ring: 43 96% 56%;
     --radius: 0.5rem;
   }
 
-  [data-theme="dark"] {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 84% 4.9%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 94.1%;
-  }
+  * { border-color: hsl(var(--border)); }
 
-  [data-theme="blue"] {
-    --background: 214 100% 97%;
-    --foreground: 213 31% 91%;
-    --card: 214 100% 97%;
-    --card-foreground: 213 31% 91%;
-    --popover: 214 100% 97%;
-    --popover-foreground: 213 31% 91%;
-    --primary: 213 94% 68%;
-    --primary-foreground: 214 100% 97%;
-    --secondary: 213 27% 84%;
-    --secondary-foreground: 213 31% 91%;
-    --muted: 213 27% 84%;
-    --muted-foreground: 213 19% 18%;
-    --accent: 213 27% 84%;
-    --accent-foreground: 213 31% 91%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 213 27% 84%;
-    --input: 213 27% 84%;
-    --ring: 213 94% 68%;
-  }
+  html { scroll-behavior: smooth; }
 
-  [data-theme="purple"] {
-    --background: 270 100% 98%;
-    --foreground: 270 15% 9%;
-    --card: 270 100% 98%;
-    --card-foreground: 270 15% 9%;
-    --popover: 270 100% 98%;
-    --popover-foreground: 270 15% 9%;
-    --primary: 270 91% 65%;
-    --primary-foreground: 270 100% 98%;
-    --secondary: 270 20% 90%;
-    --secondary-foreground: 270 15% 9%;
-    --muted: 270 20% 90%;
-    --muted-foreground: 270 8% 45%;
-    --accent: 270 20% 90%;
-    --accent-foreground: 270 15% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 270 20% 90%;
-    --input: 270 20% 90%;
-    --ring: 270 91% 65%;
-  }
-
-  [data-theme="green"] {
-    --background: 138 76% 97%;
-    --foreground: 140 6% 10%;
-    --card: 138 76% 97%;
-    --card-foreground: 140 6% 10%;
-    --popover: 138 76% 97%;
-    --popover-foreground: 140 6% 10%;
-    --primary: 142 76% 36%;
-    --primary-foreground: 138 76% 97%;
-    --secondary: 138 20% 85%;
-    --secondary-foreground: 140 6% 10%;
-    --muted: 138 20% 85%;
-    --muted-foreground: 140 4% 46%;
-    --accent: 138 20% 85%;
-    --accent-foreground: 140 6% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 138 20% 85%;
-    --input: 138 20% 85%;
-    --ring: 142 76% 36%;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
   body {
-    @apply bg-background text-foreground;
+    background-color: #080d18;
+    color: hsl(var(--foreground));
+    font-family: 'Rajdhani', 'Exo 2', sans-serif;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(245,158,11,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 80% 80%, rgba(6,182,212,0.04) 0%, transparent 50%);
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cinzel', 'Exo 2', serif;
+    letter-spacing: 0.02em;
   }
 }
+
+/* ── Gamistic UI Components ────────────────────────────────────── */
+@layer components {
+  .game-card {
+    position: relative;
+    background: linear-gradient(135deg, #0f1629 0%, #111d3a 100%);
+    border: 1px solid rgba(245,158,11,0.2);
+    border-radius: 0.75rem;
+    transition: all 0.3s ease;
+    overflow: hidden;
+  }
+  .game-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    background: linear-gradient(135deg, rgba(245,158,11,0.06) 0%, rgba(6,182,212,0.04) 100%);
+  }
+  .game-card:hover::before { opacity: 1; }
+  .game-card:hover {
+    border-color: rgba(245,158,11,0.5);
+    box-shadow: 0 0 20px rgba(245,158,11,0.15), 0 8px 32px rgba(0,0,0,0.4);
+    transform: translateY(-2px);
+  }
+
+  .gold-text {
+    color: #f59e0b;
+    text-shadow: 0 0 20px rgba(245,158,11,0.4);
+  }
+  .neon-cyan { color: #06b6d4; }
+
+  .btn-gold {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem 1.25rem;
+    border-radius: 0.5rem;
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+    background: linear-gradient(135deg, #d97706, #f59e0b);
+    color: #080d18;
+    box-shadow: 0 0 12px rgba(245,158,11,0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  .btn-gold:hover {
+    box-shadow: 0 0 24px rgba(245,158,11,0.55);
+    transform: translateY(-1px);
+  }
+
+  .btn-ghost-gold {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem 1.25rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    letter-spacing: 0.04em;
+    border: 1px solid rgba(245,158,11,0.4);
+    color: #f59e0b;
+    background: transparent;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  .btn-ghost-gold:hover {
+    background: rgba(245,158,11,0.1);
+    border-color: #f59e0b;
+    box-shadow: 0 0 14px rgba(245,158,11,0.2);
+  }
+
+  .panel-dark {
+    background: linear-gradient(180deg, #0f1629 0%, #0a1020 100%);
+    border: 1px solid rgba(245,158,11,0.15);
+    border-radius: 0.75rem;
+  }
+
+  .badge-coming-soon {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(139,92,246,0.1));
+    color: #a78bfa;
+    border: 1px solid rgba(139,92,246,0.4);
+  }
+
+  .stat-card {
+    border-radius: 0.5rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(245,158,11,0.07) 0%, rgba(6,182,212,0.03) 100%);
+    border: 1px solid rgba(245,158,11,0.14);
+  }
+
+  .divider-gold {
+    height: 1px;
+    width: 100%;
+    background: linear-gradient(90deg, transparent, rgba(245,158,11,0.4), transparent);
+  }
+
+  .chess-bg-pattern {
+    background-image:
+      linear-gradient(rgba(245,158,11,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245,158,11,0.025) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+}
+
+/* ── Animations ──────────────────────────────────────────────── */
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 8px rgba(245,158,11,0.3); }
+  50%       { box-shadow: 0 0 22px rgba(245,158,11,0.6); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+@keyframes float-up {
+  0%   { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes glow-pulse {
+  0%, 100% { text-shadow: 0 0 10px rgba(245,158,11,0.4); }
+  50%       { text-shadow: 0 0 28px rgba(245,158,11,0.85), 0 0 6px rgba(245,158,11,0.6); }
+}
+
+.animate-gold-pulse { animation: pulse-gold  2.5s ease-in-out infinite; }
+.animate-float-up   { animation: float-up    0.4s ease-out     forwards; }
+.animate-glow-pulse { animation: glow-pulse  3s   ease-in-out  infinite; }
+
+.shimmer-text {
+  background: linear-gradient(90deg, #d97706 0%, #fcd34d 40%, #d97706 60%, #f59e0b 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 3s linear infinite;
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 5px; }
+::-webkit-scrollbar-track { background: #080d18; }
+::-webkit-scrollbar-thumb { background: rgba(245,158,11,0.3); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(245,158,11,0.6); }
