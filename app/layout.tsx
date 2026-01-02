@@ -1,15 +1,22 @@
 import type { Metadata } from "next";
-import { Exo_2 } from "next/font/google";
+import { Cinzel, Rajdhani } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import ThemeSwitcher from "./components/ThemeSwitcher";
 import SessionProvider from "./components/SessionProvider";
 import Navbar from "./components/Navbar";
 
-const exo2 = Exo_2({
-  variable: "--font-exo2",
+const cinzel = Cinzel({
+  variable: "--font-cinzel",
   subsets: ["latin"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  display: "swap",
+});
+
+const rajdhani = Rajdhani({
+  variable: "--font-rajdhani",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -24,16 +31,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${exo2.variable} font-exo2 antialiased`}
-      >
+      <body className={`${cinzel.variable} ${rajdhani.variable} antialiased`}>
         <SessionProvider>
           <ThemeProvider>
             <Navbar />
-            {/* Theme Switcher positioned in top right */}
-            <div className="fixed top-20 right-4 z-40">
-              <ThemeSwitcher />
-            </div>
             <div className="pt-16">
               {children}
             </div>
