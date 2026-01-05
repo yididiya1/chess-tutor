@@ -40,39 +40,42 @@ export default function EvaluationBar({ evaluation, className = "" }: Evaluation
   };
 
   return (
-    <div className={`flex flex-col ${className}`}>
-      {/* Evaluation value display */}
-      <div className="text-center text-sm font-mono font-bold text-gray-800 mb-1">
+    <div className={`flex flex-col items-center ${className}`}>
+      <div className="text-xs font-mono font-bold mb-1" style={{ color: displayEval >= 0 ? '#e2e8f0' : '#94a3b8' }}>
         {formatEvaluation(displayEval)}
       </div>
-      
-      {/* Evaluation bar */}
-      <div className="relative w-8 h-96 bg-gray-300 border border-gray-400 overflow-hidden">
-        {/* White advantage area (top) - grows when evaluation is positive */}
-        <div 
-          className="absolute top-0 left-0 w-full bg-white transition-all duration-300 ease-out"
-          style={{ height: `${whitePercentage}%` }}
+
+      <div
+        className="relative overflow-hidden"
+        style={{
+          width: 28,
+          height: 384,
+          borderRadius: 6,
+          background: '#1a2035',
+          border: '1px solid rgba(245,158,11,0.2)',
+        }}
+      >
+        {/* White advantage (top, light) */}
+        <div
+          className="absolute top-0 left-0 w-full transition-all duration-300 ease-out"
+          style={{ height: `${whitePercentage}%`, background: 'rgba(240,230,200,0.85)' }}
         />
-        
-        {/* Black advantage area (bottom) - grows when evaluation is negative */}
-        <div 
-          className="absolute bottom-0 left-0 w-full bg-gray-900 transition-all duration-300 ease-out"
-          style={{ height: `${blackPercentage}%` }}
+        {/* Black advantage (bottom, dark) */}
+        <div
+          className="absolute bottom-0 left-0 w-full transition-all duration-300 ease-out"
+          style={{ height: `${blackPercentage}%`, background: 'rgba(15,20,40,0.95)' }}
         />
-        
-        {/* Center line for equal position */}
-        <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-600 transform -translate-y-0.5" />
-        
-        {/* Evaluation markers */}
-        <div className="absolute inset-0 flex flex-col justify-between py-2">
-          <div className="text-xs font-bold text-gray-700 text-center">+</div>
-          <div className="text-xs font-bold text-white text-center">-</div>
+        {/* Centre line */}
+        <div className="absolute top-1/2 left-0 w-full" style={{ height: 1, background: 'rgba(245,158,11,0.4)', transform: 'translateY(-0.5px)' }} />
+        {/* +/- markers */}
+        <div className="absolute inset-0 flex flex-col justify-between py-1.5 pointer-events-none">
+          <div className="text-xs font-bold text-center" style={{ color: 'rgba(30,30,50,0.8)' }}>+</div>
+          <div className="text-xs font-bold text-center" style={{ color: 'rgba(240,230,200,0.6)' }}>−</div>
         </div>
       </div>
-      
-      {/* Side to move indicator */}
-      <div className="text-center text-xs text-gray-600 mt-1">
-        {displayEval >= 0 ? "White" : "Black"}
+
+      <div className="text-xs font-rajdhani mt-1" style={{ color: 'rgba(226,232,240,0.35)' }}>
+        {displayEval >= 0 ? 'White' : 'Black'}
       </div>
     </div>
   );
