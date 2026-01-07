@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Chessboard } from "react-chessboard";
 import { Chess, Square } from "chess.js";
 import { useUserProgress } from "@/hooks/useUserProgress";
@@ -31,6 +31,21 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
   const [startTime, setStartTime] = useState<Date>(new Date());
   
   const { updatePuzzleProgress } = useUserProgress();
+
+  const boardContainerRef = useRef<HTMLDivElement>(null);
+  const [boardWidth, setBoardWidth] = useState(480);
+
+  useEffect(() => {
+    if (!boardContainerRef.current) return;
+    const observer = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        // subtract 24px padding (12px each side)
+        setBoardWidth(Math.floor(entry.contentRect.width) - 24);
+      }
+    });
+    observer.observe(boardContainerRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   // Parse moves string into array
   const puzzleMoves = puzzle.moves.split(' ').filter(move => move.trim() !== '');
@@ -319,115 +334,148 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
     }
   }
 
+  const progressPct = puzzleMoves.length > 0
+    ? Math.min(100, (currentMoveIndex / puzzleMoves.length) * 100)
+    : 0;
+
+  const msgColor = isComplete ? '#10b981' : showHint ? '#06b6d4' : '#f0e6c8';
+
   return (
-    <div className="w-full max-w-6xl mx-auto">
-      <div className="mb-4 p-4 bg-white rounded-lg shadow-sm">
-        <div className="flex justify-between items-center mb-2">
-          <div className={`text-lg font-semibold ${isComplete ? 'text-green-600' : showHint ? 'text-blue-600' : 'text-gray-700'}`}>
-            {message}
-          </div>
-          <div className="flex space-x-2">
-            {!isComplete && (
-              <button
-                onClick={showHintArrow}
-                disabled={showHint || !isPlayerTurn}
-                className={`px-4 py-2 rounded-md transition-colors ${
-                  showHint || !isPlayerTurn
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
-                    : 'bg-yellow-500 text-white hover:bg-yellow-600'
-                }`}
-              >
-                💡 Show Hint
-              </button>
-            )}
-            <button
-              onClick={resetPuzzle}
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
-            >
-              Reset
-            </button>
-          </div>
-        </div>
-        
-        {/* Progress indicator */}
-        <div className="mb-3">
-          <div className="flex justify-between text-sm text-gray-600 mb-1">
-            <span>Progress</span>
-            <span>{currentMoveIndex}/{puzzleMoves.length} moves</span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div 
-              className="bg-blue-500 h-2 rounded-full transition-all duration-300" 
-              style={{ width: `${Math.min(100, (currentMoveIndex / puzzleMoves.length) * 100)}%` }}
-            ></div>
-          </div>
-        </div>
-        
-        {moveHistory.length > 0 && (
-          <div className="text-sm text-gray-600">
-            <strong>Moves:</strong> {moveHistory.join(", ")}
-          </div>
-        )}
+    <div className="flex gap-6 w-full items-start">
+      {/* ── Board ─────────────────────────────────────────── */}
+      <div
+        ref={boardContainerRef}
+        className="flex-[3] min-w-0 rounded-xl overflow-hidden"
+        style={{
+          background: '#0a0f1c',
+          border: '1px solid rgba(245,158,11,0.2)',
+          boxShadow: '0 0 40px rgba(245,158,11,0.06)',
+          padding: '12px',
+        }}
+      >
+        <Chessboard
+          position={gamePosition}
+          onPieceDrop={onDrop}
+          boardOrientation={playerColor}
+          boardWidth={boardWidth}
+          customBoardStyle={{ borderRadius: '6px' }}
+          customDarkSquareStyle={{ backgroundColor: '#2d4a22' }}
+          customLightSquareStyle={{ backgroundColor: '#8fb36a' }}
+          customArrows={hintArrow ? [hintArrow] : []}
+          customArrowColor="rgba(245,158,11,0.85)"
+        />
       </div>
 
-      <div className="flex gap-6">
-        {/* Chessboard Section */}
-        <div className="bg-white p-4 rounded-lg shadow-lg">
-          <Chessboard
-            position={gamePosition}
-            onPieceDrop={onDrop}
-            boardOrientation={playerColor}
-            boardWidth={Math.min(600, typeof window !== 'undefined' ? window.innerWidth - 400 : 600)}
-            customBoardStyle={{
-              borderRadius: "8px",
-              boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-            }}
-            customDarkSquareStyle={{ backgroundColor: "#779952" }}
-            customLightSquareStyle={{ backgroundColor: "#edeed1" }}
-            customArrows={hintArrow ? [hintArrow] : []}
-            customArrowColor="rgb(255, 170, 0)"
-          />
+      {/* ── Right Panel ───────────────────────────────────── */}
+      <div className="flex-[1] min-w-0 flex flex-col gap-4">
+        {/* Status message */}
+        <div
+          className="rounded-xl px-4 py-3"
+          style={{
+            background: 'rgba(245,158,11,0.06)',
+            border: '1px solid rgba(245,158,11,0.18)',
+          }}
+        >
+          <p className="text-sm font-rajdhani font-semibold leading-snug" style={{ color: msgColor }}>
+            {message}
+          </p>
         </div>
 
-        {/* Puzzle Information Panel */}
-        <div className="w-[30em] bg-white p-6 rounded-lg shadow-lg">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">Puzzle Information</h3>
-          
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600 font-medium">Type:</span>
-              <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
-                {puzzle.type}
-              </span>
-            </div>
-            
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600 font-medium">Rating:</span>
-              <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">
-                {puzzle.rating}
-              </span>
-            </div>
-            
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600 font-medium">Playing as:</span>
-              <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                playerColor === 'white' 
-                  ? 'bg-gray-100 text-gray-800' 
-                  : 'bg-gray-800 text-white'
-              }`}>
-                {playerColor === 'white' ? '⚪ White' : '⚫ Black'}
-              </span>
-            </div>
-            
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600 font-medium">Status:</span>
-              <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                isComplete ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'
-              }`}>
-                {isComplete ? '✅ Completed' : '🎯 In Progress'}
-              </span>
-            </div>
+        {/* Progress */}
+        <div
+          className="rounded-xl px-4 py-4"
+          style={{
+            background: 'linear-gradient(135deg, #0a0f1e 0%, #0d1426 100%)',
+            border: '1px solid rgba(245,158,11,0.15)',
+          }}
+        >
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-xs font-cinzel font-semibold uppercase tracking-widest" style={{ color: 'rgba(245,158,11,0.6)' }}>
+              Progress
+            </span>
+            <span className="text-xs font-rajdhani font-semibold" style={{ color: '#f59e0b' }}>
+              {currentMoveIndex} / {puzzleMoves.length} moves
+            </span>
           </div>
+          <div className="w-full rounded-full h-2" style={{ background: 'rgba(255,255,255,0.08)' }}>
+            <div
+              className="h-2 rounded-full transition-all duration-500"
+              style={{
+                width: `${progressPct}%`,
+                background: isComplete
+                  ? 'linear-gradient(90deg, #10b981, #34d399)'
+                  : 'linear-gradient(90deg, #f59e0b, #fbbf24)',
+                boxShadow: isComplete ? '0 0 8px #10b98180' : '0 0 8px #f59e0b60',
+              }}
+            />
+          </div>
+          {moveHistory.length > 0 && (
+            <p className="mt-2 text-xs font-rajdhani" style={{ color: 'rgba(226,232,240,0.4)' }}>
+              {moveHistory.join(' · ')}
+            </p>
+          )}
+        </div>
+
+        {/* Puzzle Info */}
+        <div
+          className="rounded-xl px-4 py-4 flex flex-col gap-3"
+          style={{
+            background: 'linear-gradient(135deg, #0a0f1e 0%, #0d1426 100%)',
+            border: '1px solid rgba(245,158,11,0.15)',
+          }}
+        >
+          <h3 className="text-xs font-cinzel font-semibold uppercase tracking-widest mb-1" style={{ color: 'rgba(245,158,11,0.6)' }}>
+            Puzzle Info
+          </h3>
+
+          {[
+            { label: 'Type',       value: puzzle.type,                                    accent: '#06b6d4' },
+            { label: 'Rating',     value: `★ ${puzzle.rating}`,                           accent: '#f59e0b' },
+            { label: 'Playing as', value: playerColor === 'white' ? '⚪ White' : '⚫ Black', accent: playerColor === 'white' ? '#e2e8f0' : '#94a3b8' },
+            { label: 'Status',     value: isComplete ? '✅ Solved' : '🎯 In Progress',    accent: isComplete ? '#10b981' : '#94a3b8' },
+          ].map(({ label, value, accent }) => (
+            <div key={label} className="flex justify-between items-center">
+              <span className="text-xs font-rajdhani" style={{ color: 'rgba(226,232,240,0.45)' }}>{label}</span>
+              <span
+                className="text-xs font-rajdhani font-semibold px-2 py-0.5 rounded-full"
+                style={{ background: `${accent}18`, color: accent, border: `1px solid ${accent}30` }}
+              >
+                {value}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Action buttons */}
+        <div className="flex gap-2">
+          {!isComplete && (
+            <button
+              onClick={showHintArrow}
+              disabled={showHint || !isPlayerTurn}
+              className="flex-1 py-2 rounded-lg text-xs font-cinzel font-semibold uppercase tracking-wider transition-all duration-200"
+              style={{
+                background: showHint || !isPlayerTurn ? 'rgba(255,255,255,0.04)' : 'rgba(245,158,11,0.12)',
+                border: `1px solid ${showHint || !isPlayerTurn ? 'rgba(255,255,255,0.08)' : 'rgba(245,158,11,0.4)'}`,
+                color: showHint || !isPlayerTurn ? 'rgba(226,232,240,0.25)' : '#f59e0b',
+                cursor: showHint || !isPlayerTurn ? 'not-allowed' : 'pointer',
+              }}
+            >
+              💡 Hint
+            </button>
+          )}
+          <button
+            onClick={resetPuzzle}
+            className="flex-1 py-2 rounded-lg text-xs font-cinzel font-semibold uppercase tracking-wider transition-all duration-200"
+            style={{
+              background: 'rgba(6,182,212,0.1)',
+              border: '1px solid rgba(6,182,212,0.35)',
+              color: '#06b6d4',
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(6,182,212,0.2)'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(6,182,212,0.1)'; }}
+          >
+            ↺ Reset
+          </button>
         </div>
       </div>
     </div>
