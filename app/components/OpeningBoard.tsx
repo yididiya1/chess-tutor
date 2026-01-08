@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Chessboard } from "react-chessboard";
 import { Chess, Square } from "chess.js";
 
@@ -31,6 +31,20 @@ export default function OpeningBoard({ openingLine, playerSide }: OpeningBoardPr
   const [showHint, setShowHint] = useState(false);
   const [hintArrow, setHintArrow] = useState<[Square, Square] | null>(null);
   const [isPlayerTurn, setIsPlayerTurn] = useState(playerSide === 'white');
+
+  const boardContainerRef = useRef<HTMLDivElement>(null);
+  const [boardWidth, setBoardWidth] = useState(480);
+
+  useEffect(() => {
+    if (!boardContainerRef.current) return;
+    const observer = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        setBoardWidth(Math.floor(entry.contentRect.width) - 24);
+      }
+    });
+    observer.observe(boardContainerRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const newGame = new Chess();
@@ -222,121 +236,150 @@ export default function OpeningBoard({ openingLine, playerSide }: OpeningBoardPr
     }
   }
 
+  const progressPct = openingLine.moves.length > 0
+    ? Math.min(100, (currentMoveIndex / openingLine.moves.length) * 100)
+    : 0;
+  const msgColor = isComplete ? '#10b981' : showHint ? '#06b6d4' : '#f0e6c8';
+
   return (
-    <div className="w-full max-w-5xl mx-auto">
-      <div className="mb-4 p-4 bg-white rounded-lg shadow-sm">
-        <div className="flex justify-between items-center mb-2">
-          <div className={`text-lg font-semibold ${isComplete ? 'text-green-600' : showHint ? 'text-blue-600' : 'text-gray-700'}`}>
-            {message}
-          </div>
-          <div className="flex space-x-2">
-            {!isComplete && (
-              <button
-                onClick={showHintArrow}
-                disabled={showHint || !isPlayerTurn}
-                className={`px-4 py-2 rounded-md transition-colors ${
-                  showHint || !isPlayerTurn
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
-                    : 'bg-yellow-500 text-white hover:bg-yellow-600'
-                }`}
-              >
-                💡 Show Hint
-              </button>
-            )}
-            <button
-              onClick={resetOpening}
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
-            >
-              Reset
-            </button>
-          </div>
-        </div>
-        
-        {moveHistory.length > 0 && (
-          <div className="text-sm text-gray-600">
-            <strong>Moves:</strong> {moveHistory.join(", ")}
-          </div>
-        )}
-        
-        {/* Progress Bar */}
-        <div className="mt-3">
-          <div className="flex justify-between text-xs text-gray-600 mb-1">
-            <span>Progress</span>
-            <span>{currentMoveIndex}/{openingLine.moves.length} moves</span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div 
-              className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${(currentMoveIndex / openingLine.moves.length) * 100}%` }}
-            ></div>
-          </div>
-        </div>
+    <div className="flex gap-6 w-full items-start p-16 pt-2">
+      {/* ── Board ─────────────────────────────────────────── */}
+      <div
+        ref={boardContainerRef}
+        className="flex-[3] min-w-0 rounded-xl overflow-hidden"
+        style={{
+          background: '#0a0f1c',
+          border: '1px solid rgba(245,158,11,0.2)',
+          boxShadow: '0 0 40px rgba(245,158,11,0.06)',
+          padding: '12px',
+        }}
+      >
+        <Chessboard
+          position={gamePosition}
+          onPieceDrop={onDrop}
+          boardOrientation={playerSide}
+          boardWidth={boardWidth}
+          customBoardStyle={{ borderRadius: '6px' }}
+          customDarkSquareStyle={{ backgroundColor: '#2d4a22' }}
+          customLightSquareStyle={{ backgroundColor: '#8fb36a' }}
+          customArrows={hintArrow ? [hintArrow] : []}
+          customArrowColor="rgba(245,158,11,0.85)"
+        />
       </div>
 
-      <div className="flex gap-6">
-        {/* Chess Board */}
-        <div className="bg-white p-4 rounded-lg shadow-lg">
-          <Chessboard
-            position={gamePosition}
-            onPieceDrop={onDrop}
-            boardOrientation={playerSide}
-            boardWidth={700}
-            customBoardStyle={{
-              borderRadius: "8px",
-              boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-            }}
-            customDarkSquareStyle={{ backgroundColor: "#779952" }}
-            customLightSquareStyle={{ backgroundColor: "#edeed1" }}
-            customArrows={hintArrow ? [hintArrow] : []}
-            customArrowColor="rgb(255, 170, 0)"
-          />
+      {/* ── Right Panel ───────────────────────────────────── */}
+      <div className="flex-[1] min-w-0 flex flex-col gap-4">
+        {/* Status */}
+        <div
+          className="rounded-xl px-4 py-3"
+          style={{
+            background: 'rgba(245,158,11,0.06)',
+            border: '1px solid rgba(245,158,11,0.18)',
+          }}
+        >
+          <p className="text-sm font-rajdhani font-semibold leading-snug" style={{ color: msgColor }}>
+            {message}
+          </p>
         </div>
 
-        {/* Opening Information Panel */}
-        <div className="w-80 p-4 bg-gray-50 rounded-lg flex-shrink-0">
-          <h3 className="font-semibold text-gray-800 mb-3">Opening Information</h3>
-          <div className="space-y-3 text-sm">
-            <div>
-              <span className="text-gray-600">Opening:</span>
-              <div className="font-medium text-gray-800 mt-1">{openingLine.name}</div>
+        {/* Progress */}
+        <div
+          className="rounded-xl px-4 py-4"
+          style={{
+            background: 'linear-gradient(135deg, #0a0f1e 0%, #0d1426 100%)',
+            border: '1px solid rgba(245,158,11,0.15)',
+          }}
+        >
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-xs font-cinzel font-semibold uppercase tracking-widest" style={{ color: 'rgba(245,158,11,0.6)' }}>Progress</span>
+            <span className="text-xs font-rajdhani font-semibold" style={{ color: '#f59e0b' }}>{currentMoveIndex} / {openingLine.moves.length} moves</span>
+          </div>
+          <div className="w-full rounded-full h-2" style={{ background: 'rgba(255,255,255,0.08)' }}>
+            <div
+              className="h-2 rounded-full transition-all duration-500"
+              style={{
+                width: `${progressPct}%`,
+                background: isComplete ? 'linear-gradient(90deg,#10b981,#34d399)' : 'linear-gradient(90deg,#f59e0b,#fbbf24)',
+                boxShadow: isComplete ? '0 0 8px #10b98180' : '0 0 8px #f59e0b60',
+              }}
+            />
+          </div>
+          {moveHistory.length > 0 && (
+            <p className="mt-2 text-xs font-rajdhani" style={{ color: 'rgba(226,232,240,0.4)' }}>
+              {moveHistory.join(' · ')}
+            </p>
+          )}
+        </div>
+
+        {/* Opening Info */}
+        <div
+          className="rounded-xl px-4 py-4 flex flex-col gap-3"
+          style={{
+            background: 'linear-gradient(135deg, #0a0f1e 0%, #0d1426 100%)',
+            border: '1px solid rgba(245,158,11,0.15)',
+          }}
+        >
+          <h3 className="text-xs font-cinzel font-semibold uppercase tracking-widest mb-1" style={{ color: 'rgba(245,158,11,0.6)' }}>Opening Info</h3>
+
+          {[
+            { label: 'Opening',    value: openingLine.name,                                   accent: '#f0e6c8' },
+            { label: 'Difficulty', value: openingLine.difficulty,                              accent: '#f59e0b' },
+            { label: 'Playing as', value: playerSide === 'white' ? '⚪ White' : '⚫ Black',  accent: playerSide === 'white' ? '#e2e8f0' : '#94a3b8' },
+            { label: 'Status',     value: isComplete ? '✅ Completed' : '🎯 In Progress',    accent: isComplete ? '#10b981' : '#94a3b8' },
+          ].map(({ label, value, accent }) => (
+            <div key={label} className="flex justify-between items-center">
+              <span className="text-xs font-rajdhani" style={{ color: 'rgba(226,232,240,0.45)' }}>{label}</span>
+              <span className="text-xs font-rajdhani font-semibold px-2 py-0.5 rounded-full" style={{ background: `${accent}18`, color: accent, border: `1px solid ${accent}30` }}>{value}</span>
             </div>
-            <div>
-              <span className="text-gray-600">Difficulty:</span>
-              <div className="font-medium text-gray-800 mt-1">{openingLine.difficulty}</div>
-            </div>
-            <div>
-              <span className="text-gray-600">Playing As:</span>
-              <div className={`font-medium mt-1 ${playerSide === 'white' ? 'text-gray-800' : 'text-gray-600'}`}>
-                {playerSide === 'white' ? '⚪ White' : '⚫ Black'}
-              </div>
-            </div>
-            <div>
-              <span className="text-gray-600">Progress:</span>
-              <div className="font-medium text-gray-800 mt-1">
-                {currentMoveIndex}/{openingLine.moves.length} moves
-              </div>
+          ))}
+
+          <div className="pt-3 mt-1" style={{ borderTop: '1px solid rgba(245,158,11,0.1)' }}>
+            <p className="text-xs font-rajdhani leading-relaxed" style={{ color: 'rgba(226,232,240,0.45)' }}>{openingLine.description}</p>
+          </div>
+
+          <div className="pt-3" style={{ borderTop: '1px solid rgba(245,158,11,0.1)' }}>
+            <p className="text-xs font-cinzel font-semibold uppercase tracking-widest mb-2" style={{ color: 'rgba(245,158,11,0.5)' }}>Statistics</p>
+            <div className="flex gap-2">
+              {[
+                { label: 'White', value: `${openingLine.whiteWinRate}%`, color: '#e2e8f0' },
+                { label: 'Black', value: `${openingLine.blackWinRate}%`, color: '#94a3b8' },
+                { label: 'Draw',  value: `${openingLine.drawRate}%`,     color: '#f59e0b' },
+              ].map(({ label, value, color }) => (
+                <div key={label} className="flex-1 rounded-lg px-2 py-1.5 text-center" style={{ background: `${color}12`, border: `1px solid ${color}25` }}>
+                  <p className="text-xs font-rajdhani" style={{ color: 'rgba(226,232,240,0.4)' }}>{label}</p>
+                  <p className="text-sm font-cinzel font-bold" style={{ color }}>{value}</p>
+                </div>
+              ))}
             </div>
           </div>
-          
-          <div className="mt-4 pt-3 border-t border-gray-200">
-            <span className="text-gray-600 text-sm">Description:</span>
-            <p className="text-sm text-gray-700 mt-1">{openingLine.description}</p>
-          </div>
-          
-          <div className="mt-4 pt-3 border-t border-gray-200">
-            <span className="text-gray-600 text-sm mb-2 block">Statistics:</span>
-            <div className="flex flex-col space-y-2 text-xs">
-              <span className="bg-green-100 px-2 py-1 rounded text-green-800">
-                White: {openingLine.whiteWinRate}%
-              </span>
-              <span className="bg-red-100 px-2 py-1 rounded text-red-800">
-                Black: {openingLine.blackWinRate}%
-              </span>
-              <span className="bg-gray-100 px-2 py-1 rounded text-gray-800">
-                Draws: {openingLine.drawRate}%
-              </span>
-            </div>
-          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex gap-2">
+          {!isComplete && (
+            <button
+              onClick={showHintArrow}
+              disabled={showHint || !isPlayerTurn}
+              className="flex-1 py-2 rounded-lg text-xs font-cinzel font-semibold uppercase tracking-wider transition-all duration-200"
+              style={{
+                background: showHint || !isPlayerTurn ? 'rgba(255,255,255,0.04)' : 'rgba(245,158,11,0.12)',
+                border: `1px solid ${showHint || !isPlayerTurn ? 'rgba(255,255,255,0.08)' : 'rgba(245,158,11,0.4)'}`,
+                color: showHint || !isPlayerTurn ? 'rgba(226,232,240,0.25)' : '#f59e0b',
+                cursor: showHint || !isPlayerTurn ? 'not-allowed' : 'pointer',
+              }}
+            >
+              💡 Hint
+            </button>
+          )}
+          <button
+            onClick={resetOpening}
+            className="flex-1 py-2 rounded-lg text-xs font-cinzel font-semibold uppercase tracking-wider transition-all duration-200"
+            style={{ background: 'rgba(6,182,212,0.1)', border: '1px solid rgba(6,182,212,0.35)', color: '#06b6d4' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(6,182,212,0.2)'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(6,182,212,0.1)'; }}
+          >
+            ↺ Reset
+          </button>
         </div>
       </div>
     </div>
