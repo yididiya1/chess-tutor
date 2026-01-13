@@ -1,125 +1,147 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronLeft, Filter, TrendingUp } from "lucide-react";
+import { ChevronLeft, Filter, TrendingUp, Zap } from "lucide-react";
 import Link from "next/link";
 import OpeningBoard from "../components/OpeningBoard";
 import ChessBoardPreview from "../components/ChessBoardPreview";
 import trapsData from "../../data/traps.json";
 
+const darkPage: React.CSSProperties = { background: "#080d18", minHeight: "100vh" };
+const darkFlex: React.CSSProperties = { background: "#080d18", height: "100vh", display: "flex" };
+
+const leftPanel: React.CSSProperties = {
+  width: "320px",
+  background: "linear-gradient(180deg, #0f1629 0%, #0a1120 100%)",
+  borderRight: "1px solid rgba(245,158,11,0.25)",
+  display: "flex",
+  flexDirection: "column",
+};
+
+const muted: React.CSSProperties = {
+  background: "rgba(245,158,11,0.05)",
+  border: "1px solid rgba(245,158,11,0.15)",
+  borderRadius: "8px",
+  padding: "12px",
+};
+
+const inputStyle: React.CSSProperties = {
+  background: "rgba(255,255,255,0.05)",
+  border: "1px solid rgba(245,158,11,0.25)",
+  borderRadius: "6px",
+  color: "#e2e8f0",
+  padding: "6px 10px",
+  fontSize: "13px",
+  width: "100%",
+  outline: "none",
+};
+
+function difficultyBadge(difficulty: string) {
+  const styles: Record<string, React.CSSProperties> = {
+    Beginner: { background: "rgba(16,185,129,0.15)", color: "#10b981", border: "1px solid rgba(16,185,129,0.3)" },
+    Intermediate: { background: "rgba(245,158,11,0.15)", color: "#f59e0b", border: "1px solid rgba(245,158,11,0.3)" },
+    Advanced: { background: "rgba(239,68,68,0.15)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.3)" },
+  };
+  return styles[difficulty] || styles.Intermediate;
+}
+
 export default function TrapsPage() {
   const [selectedTrap, setSelectedTrap] = useState<number | null>(null);
   const [selectedVariation, setSelectedVariation] = useState<number | null>(null);
   const [playerSide, setPlayerSide] = useState<"white" | "black">("white");
-  const [filters, setFilters] = useState({
-    side: "All", // All, White, Black
-    difficulty: "All",
-    minWinRate: 0
-  });
+  const [filters, setFilters] = useState({ side: "All", difficulty: "All", minWinRate: 0 });
   const [showFilters, setShowFilters] = useState(false);
 
   const filteredTraps = trapsData.filter(trap => {
-    const sideMatch = filters.side === "All" || 
+    const sideMatch = filters.side === "All" ||
       (filters.side === "White" && trap.whiteWinRate > trap.blackWinRate) ||
       (filters.side === "Black" && trap.blackWinRate > trap.whiteWinRate);
-    
     const difficultyMatch = filters.difficulty === "All" || trap.difficulty === filters.difficulty;
-    
     const winRateMatch = Math.max(trap.whiteWinRate, trap.blackWinRate) >= filters.minWinRate;
-    
     return sideMatch && difficultyMatch && winRateMatch;
   });
 
   const currentTrap = selectedTrap ? trapsData.find(o => o.id === selectedTrap) : null;
-  const currentVariation = selectedVariation && currentTrap ? 
+  const currentVariation = selectedVariation && currentTrap ?
     currentTrap.variations?.find(v => v.id === selectedVariation) : null;
 
-  // Reset variation when trap changes
-  const handleTrapSelect = (trapId: number) => {
-    setSelectedTrap(trapId);
-    setSelectedVariation(null);
-  };
+  const handleTrapSelect = (trapId: number) => { setSelectedTrap(trapId); setSelectedVariation(null); };
+  const handleBackToTraps = () => { setSelectedTrap(null); setSelectedVariation(null); };
+  const handleBackToVariations = () => { setSelectedVariation(null); };
 
-  const handleBackToTraps = () => {
-    setSelectedTrap(null);
-    setSelectedVariation(null);
-  };
-
-  const handleBackToVariations = () => {
-    setSelectedVariation(null);
-  };
+  const backBtn = (label: string, onClick: () => void) => (
+    <button onClick={onClick} className="flex items-center text-sm mb-4 transition-colors"
+      style={{ color: "rgba(245,158,11,0.7)", background: "none", border: "none", cursor: "pointer" }}
+      onMouseEnter={e => (e.currentTarget.style.color = "#f59e0b")}
+      onMouseLeave={e => (e.currentTarget.style.color = "rgba(245,158,11,0.7)")}>
+      <ChevronLeft size={18} />
+      <span className="ml-1">{label}</span>
+    </button>
+  );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div style={darkPage}>
       {selectedVariation && currentVariation && currentTrap ? (
-        // Chess Board View - Level 3
-        <div className="flex h-screen bg-background">
-          {/* Left Panel - Trap Info */}
-          <div className="w-80 bg-card shadow-lg flex flex-col border-r border-border">
-            <div className="p-4 border-b border-border">
-              <button
-                onClick={handleBackToVariations}
-                className="flex items-center text-muted-foreground hover:text-foreground mb-4"
-              >
-                <ChevronLeft size={20} />
-                <span className="ml-1">Back to Traps</span>
-              </button>
-              <h1 className="text-xl font-bold text-foreground">{currentVariation.name}</h1>
-              <p className="text-sm text-muted-foreground mt-1">{currentTrap.name}</p>
-              <p className="text-sm text-muted-foreground mt-2">{currentVariation.description}</p>
-            </div>
+        // Level 3 — Board View
+        <div style={darkFlex}>
+          <div style={leftPanel}>
+            <div className="p-4 space-y-4 overflow-y-auto flex-1">
+              <div style={{ borderBottom: "1px solid rgba(245,158,11,0.2)", paddingBottom: "16px" }}>
+                {backBtn("Back to Traps", handleBackToVariations)}
+                <h1 className="text-lg font-bold font-cinzel mb-1" style={{ color: "#f0e6c8" }}>{currentVariation.name}</h1>
+                <p className="text-xs mb-1" style={{ color: "rgba(245,158,11,0.6)" }}>{currentTrap.name}</p>
+                <p className="text-xs" style={{ color: "rgba(226,232,240,0.55)" }}>{currentVariation.description}</p>
+              </div>
 
-            <div className="p-4 space-y-4">
-              <div className="bg-muted p-3 rounded-lg">
-                <h3 className="font-semibold text-foreground mb-2">Play As</h3>
+              {/* Play As */}
+              <div style={muted}>
+                <h3 className="text-xs font-bold font-cinzel mb-2" style={{ color: "rgba(245,158,11,0.9)" }}>Play As</h3>
                 <div className="flex space-x-2">
-                  <button
-                    onClick={() => setPlayerSide("white")}
-                    className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                      playerSide === "white"
-                        ? "bg-white text-gray-900 shadow-sm"
-                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                    }`}
-                  >
-                    ⚪ White
-                  </button>
-                  <button
-                    onClick={() => setPlayerSide("black")}
-                    className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                      playerSide === "black"
-                        ? "bg-gray-800 text-white shadow-sm"
-                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                    }`}
-                  >
-                    ⚫ Black
-                  </button>
+                  <button onClick={() => setPlayerSide("white")}
+                    style={{
+                      flex: 1, padding: "8px 4px", borderRadius: "6px", fontSize: "12px", fontWeight: 600, cursor: "pointer",
+                      background: playerSide === "white" ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.06)",
+                      color: playerSide === "white" ? "#0a0a0a" : "rgba(226,232,240,0.6)",
+                      border: playerSide === "white" ? "none" : "1px solid rgba(255,255,255,0.1)",
+                      boxShadow: playerSide === "white" ? "0 0 10px rgba(255,255,255,0.2)" : "none",
+                    }}>⚪ White</button>
+                  <button onClick={() => setPlayerSide("black")}
+                    style={{
+                      flex: 1, padding: "8px 4px", borderRadius: "6px", fontSize: "12px", fontWeight: 600, cursor: "pointer",
+                      background: playerSide === "black" ? "#1a1a2e" : "rgba(255,255,255,0.06)",
+                      color: playerSide === "black" ? "#e2e8f0" : "rgba(226,232,240,0.6)",
+                      border: playerSide === "black" ? "1px solid rgba(245,158,11,0.5)" : "1px solid rgba(255,255,255,0.1)",
+                      boxShadow: playerSide === "black" ? "0 0 10px rgba(245,158,11,0.15)" : "none",
+                    }}>⚫ Black</button>
                 </div>
               </div>
 
-              <div className="bg-muted p-3 rounded-lg">
-                <h3 className="font-semibold text-foreground mb-2">Trap Success Rate</h3>
-                <div className="space-y-2 text-sm">
+              {/* Trap Success Rate */}
+              <div style={muted}>
+                <h3 className="text-xs font-bold font-cinzel mb-2" style={{ color: "rgba(245,158,11,0.9)" }}>Trap Success Rate</h3>
+                <div className="space-y-2 text-xs">
                   <div className="flex justify-between">
-                    <span>White Success:</span>
-                    <span className="font-medium text-green-600">{currentVariation.whiteWinRate}%</span>
+                    <span style={{ color: "rgba(226,232,240,0.6)" }}>White Success:</span>
+                    <span className="font-semibold" style={{ color: "#10b981" }}>{currentVariation.whiteWinRate}%</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Black Success:</span>
-                    <span className="font-medium text-red-600">{currentVariation.blackWinRate}%</span>
+                    <span style={{ color: "rgba(226,232,240,0.6)" }}>Black Success:</span>
+                    <span className="font-semibold" style={{ color: "#ef4444" }}>{currentVariation.blackWinRate}%</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Draw Rate:</span>
-                    <span className="font-medium text-gray-600">{currentVariation.drawRate}%</span>
+                    <span style={{ color: "rgba(226,232,240,0.6)" }}>Draw Rate:</span>
+                    <span className="font-semibold" style={{ color: "rgba(245,158,11,0.8)" }}>{currentVariation.drawRate}%</span>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-muted p-3 rounded-lg">
-                <h3 className="font-semibold text-foreground mb-2">Trap Sequence</h3>
-                <div className="text-sm text-muted-foreground">
+              {/* Trap Sequence */}
+              <div style={muted}>
+                <h3 className="text-xs font-bold font-cinzel mb-2" style={{ color: "rgba(245,158,11,0.9)" }}>Trap Sequence</h3>
+                <div className="text-xs leading-relaxed" style={{ color: "rgba(226,232,240,0.7)" }}>
                   {currentVariation.moves.map((move, index) => (
-                    <span key={index} className="mr-2">
-                      {Math.floor(index / 2) + 1}{index % 2 === 0 ? '.' : '...'} {move}
+                    <span key={index} className="mr-1">
+                      {Math.floor(index / 2) + 1}{index % 2 === 0 ? "." : "..."} {move}
                     </span>
                   ))}
                 </div>
@@ -127,9 +149,8 @@ export default function TrapsPage() {
             </div>
           </div>
 
-          {/* Main Content - Chess Board */}
           <div className="flex-1 flex items-center justify-center p-8">
-            <OpeningBoard 
+            <OpeningBoard
               openingLine={{
                 id: currentVariation.id,
                 name: currentVariation.name,
@@ -145,76 +166,73 @@ export default function TrapsPage() {
             />
           </div>
         </div>
+
       ) : selectedTrap && currentTrap ? (
-        // Trap Variations Grid View - Level 2
+        // Level 2 — Trap Variations Grid
         <div className="py-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             <div className="mb-8">
-              <button
-                onClick={handleBackToTraps}
-                className="flex items-center text-muted-foreground hover:text-foreground mb-4"
-              >
-                <ChevronLeft size={20} />
-                <span className="ml-1">Back to Opening Traps</span>
-              </button>
-              <h1 className="text-3xl font-bold text-foreground">{currentTrap.name}</h1>
-              <p className="text-muted-foreground mt-2">{currentTrap.description}</p>
-              <div className="mt-4 flex space-x-4 text-sm">
-                <span className="bg-green-100 px-3 py-1 rounded-full text-green-800">
-                  White Success: {currentTrap.whiteWinRate}%
+              {backBtn("Back to Opening Traps", handleBackToTraps)}
+              <h1 className="text-3xl font-bold font-cinzel mb-2" style={{ color: "#f0e6c8" }}>
+                {currentTrap.name}
+              </h1>
+              <p className="text-sm mb-4" style={{ color: "rgba(226,232,240,0.6)" }}>{currentTrap.description}</p>
+              <div className="flex flex-wrap gap-2 text-xs">
+                <span className="px-3 py-1 rounded-full font-semibold"
+                  style={{ background: "rgba(16,185,129,0.15)", color: "#10b981", border: "1px solid rgba(16,185,129,0.3)" }}>
+                  White: {currentTrap.whiteWinRate}%
                 </span>
-                <span className="bg-red-100 px-3 py-1 rounded-full text-red-800">
-                  Black Success: {currentTrap.blackWinRate}%
+                <span className="px-3 py-1 rounded-full font-semibold"
+                  style={{ background: "rgba(239,68,68,0.15)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.3)" }}>
+                  Black: {currentTrap.blackWinRate}%
                 </span>
-                <span className="bg-blue-100 px-3 py-1 rounded-full text-blue-800">
+                <span className="px-3 py-1 rounded-full font-semibold"
+                  style={{ background: "rgba(6,182,212,0.15)", color: "#06b6d4", border: "1px solid rgba(6,182,212,0.3)" }}>
                   Popularity: {currentTrap.popularity}%
                 </span>
               </div>
             </div>
 
-            {/* Trap Variations Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
               {(currentTrap.variations || []).map((variation) => (
-                <div
-                  key={variation.id}
-                  onClick={() => setSelectedVariation(variation.id)}
-                  className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer overflow-hidden"
-                >
-                  {/* Chess Position Preview at Top */}
-                  <div className="bg-muted p-4">
+                <div key={variation.id} onClick={() => setSelectedVariation(variation.id)}
+                  className="rounded-xl cursor-pointer overflow-hidden transition-all duration-200"
+                  style={{ background: "linear-gradient(180deg, #0f1629 0%, #111d3a 100%)", border: "1px solid rgba(239,68,68,0.25)" }}
+                  onMouseEnter={e => {
+                    (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(239,68,68,0.6)";
+                    (e.currentTarget as HTMLDivElement).style.transform = "translateY(-2px)";
+                    (e.currentTarget as HTMLDivElement).style.boxShadow = "0 8px 25px rgba(239,68,68,0.15)";
+                  }}
+                  onMouseLeave={e => {
+                    (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(239,68,68,0.25)";
+                    (e.currentTarget as HTMLDivElement).style.transform = "none";
+                    (e.currentTarget as HTMLDivElement).style.boxShadow = "none";
+                  }}>
+                  <div style={{ background: "#080d18", padding: "12px" }}>
                     <ChessBoardPreview fen={variation.fen} />
                   </div>
-                  
-                  <div className="p-6">
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-lg font-semibold text-foreground">{variation.name}</h3>
-                      <span className="text-2xl">🪤</span>
+                  <div className="p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="text-sm font-bold font-cinzel" style={{ color: "#f0e6c8" }}>{variation.name}</h3>
+                      <span style={{ fontSize: "18px" }}>🪤</span>
                     </div>
-                    
-                    <p className="text-muted-foreground text-sm mb-4">{variation.description}</p>
-                    
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600">White Success:</span>
-                        <div className="flex items-center">
-                          <TrendingUp size={14} className="text-green-500 mr-1" />
-                          <span className="font-medium text-green-600">{variation.whiteWinRate}%</span>
-                        </div>
+                    <p className="text-xs mb-3" style={{ color: "rgba(226,232,240,0.55)" }}>{variation.description}</p>
+                    <div className="space-y-1 text-xs">
+                      <div className="flex justify-between">
+                        <span style={{ color: "rgba(226,232,240,0.55)" }}>White Success:</span>
+                        <span className="font-semibold flex items-center gap-1" style={{ color: "#10b981" }}>
+                          <TrendingUp size={11} />{variation.whiteWinRate}%
+                        </span>
                       </div>
-                      
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600">Black Success:</span>
-                        <div className="flex items-center">
-                          <TrendingUp size={14} className="text-red-500 mr-1" />
-                          <span className="font-medium text-red-600">{variation.blackWinRate}%</span>
-                        </div>
+                      <div className="flex justify-between">
+                        <span style={{ color: "rgba(226,232,240,0.55)" }}>Black Success:</span>
+                        <span className="font-semibold flex items-center gap-1" style={{ color: "#ef4444" }}>
+                          <TrendingUp size={11} />{variation.blackWinRate}%
+                        </span>
                       </div>
                     </div>
-                    
-                    <div className="mt-4 pt-4 border-t border-gray-200">
-                      <div className="text-xs text-gray-500">
-                        <strong>Key Moves:</strong> {variation.moves.slice(-3).join(", ")}
-                      </div>
+                    <div className="mt-3 pt-3 text-xs" style={{ borderTop: "1px solid rgba(239,68,68,0.15)", color: "rgba(239,68,68,0.6)" }}>
+                      <strong>Key Moves:</strong> {variation.moves.slice(-3).join(", ")}
                     </div>
                   </div>
                 </div>
@@ -223,143 +241,126 @@ export default function TrapsPage() {
 
             {(currentTrap.variations || []).length === 0 && (
               <div className="text-center py-12">
-                <div className="text-gray-500">
-                  <div className="text-4xl mb-4">🪤</div>
-                  <h3 className="text-lg font-semibold mb-2">No trap variations available</h3>
-                  <p>Trap variations for this opening will be added soon.</p>
-                </div>
+                <div className="text-5xl mb-4">🪤</div>
+                <h3 className="text-lg font-cinzel font-semibold mb-2" style={{ color: "#f0e6c8" }}>No trap variations available</h3>
+                <p style={{ color: "rgba(245,158,11,0.5)" }}>Trap variations will be added soon.</p>
               </div>
             )}
           </div>
         </div>
+
       ) : (
-        // Opening Traps Grid View - Level 1
+        // Level 1 — Traps Grid
         <div className="py-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-start justify-between mb-8">
               <div>
-                <Link href="/" className="flex items-center text-muted-foreground hover:text-foreground mb-4">
-                  <ChevronLeft size={20} />
+                <Link href="/" className="flex items-center text-sm mb-4 transition-colors"
+                  style={{ color: "rgba(245,158,11,0.7)" }}
+                  onMouseEnter={e => (e.currentTarget.style.color = "#f59e0b")}
+                  onMouseLeave={e => (e.currentTarget.style.color = "rgba(245,158,11,0.7)")}>
+                  <ChevronLeft size={18} />
                   <span className="ml-1">Back to Home</span>
                 </Link>
-                <h1 className="text-3xl font-bold text-foreground">Opening Traps</h1>
-                <p className="text-muted-foreground mt-2">Learn and practice deadly opening traps to catch your opponents</p>
+                <h1 className="text-3xl font-bold font-cinzel" style={{ color: "#f0e6c8" }}>
+                  Opening <span style={{ color: "#ef4444" }}>Traps</span>
+                </h1>
+                <p className="text-sm mt-2" style={{ color: "rgba(226,232,240,0.55)" }}>
+                  Learn deadly opening traps to catch your opponents off-guard
+                </p>
               </div>
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className="flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
-              >
-                <Filter size={16} />
+              <button onClick={() => setShowFilters(!showFilters)}
+                className="flex items-center px-4 py-2 rounded-lg text-sm font-semibold transition-all"
+                style={{
+                  background: showFilters ? "rgba(239,68,68,0.2)" : "rgba(239,68,68,0.1)",
+                  border: "1px solid rgba(239,68,68,0.4)",
+                  color: "#ef4444",
+                }}>
+                <Filter size={14} />
                 <span className="ml-2">Filters</span>
               </button>
             </div>
 
-            {/* Filters */}
             {showFilters && (
-              <div className="mb-8 p-4 bg-card rounded-lg shadow-sm border border-border">
+              <div className="mb-8 p-4 rounded-xl" style={{ background: "rgba(239,68,68,0.04)", border: "1px solid rgba(239,68,68,0.2)" }}>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Side</label>
-                    <select
-                      value={filters.side}
-                      onChange={(e) => setFilters(prev => ({ ...prev, side: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                    >
-                      <option value="All">All Sides</option>
-                      <option value="White">White Traps</option>
-                      <option value="Black">Black Traps</option>
+                    <label className="block text-xs font-semibold mb-2" style={{ color: "rgba(239,68,68,0.8)" }}>Side</label>
+                    <select value={filters.side}
+                      onChange={e => setFilters(prev => ({ ...prev, side: e.target.value }))}
+                      style={inputStyle}>
+                      <option value="All" style={{ background: "#0f1629" }}>All Sides</option>
+                      <option value="White" style={{ background: "#0f1629" }}>White Traps</option>
+                      <option value="Black" style={{ background: "#0f1629" }}>Black Traps</option>
                     </select>
                   </div>
-                  
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Difficulty</label>
-                    <select
-                      value={filters.difficulty}
-                      onChange={(e) => setFilters(prev => ({ ...prev, difficulty: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                    >
-                      <option value="All">All Difficulties</option>
-                      <option value="Beginner">Beginner</option>
-                      <option value="Intermediate">Intermediate</option>
-                      <option value="Advanced">Advanced</option>
+                    <label className="block text-xs font-semibold mb-2" style={{ color: "rgba(239,68,68,0.8)" }}>Difficulty</label>
+                    <select value={filters.difficulty}
+                      onChange={e => setFilters(prev => ({ ...prev, difficulty: e.target.value }))}
+                      style={inputStyle}>
+                      <option value="All" style={{ background: "#0f1629" }}>All Difficulties</option>
+                      <option value="Beginner" style={{ background: "#0f1629" }}>Beginner</option>
+                      <option value="Intermediate" style={{ background: "#0f1629" }}>Intermediate</option>
+                      <option value="Advanced" style={{ background: "#0f1629" }}>Advanced</option>
                     </select>
                   </div>
-                  
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Min Success Rate (%)</label>
-                    <input
-                      type="number"
-                      min="0"
-                      max="100"
-                      value={filters.minWinRate}
-                      onChange={(e) => setFilters(prev => ({ ...prev, minWinRate: parseInt(e.target.value) || 0 }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                    />
+                    <label className="block text-xs font-semibold mb-2" style={{ color: "rgba(239,68,68,0.8)" }}>Min Success Rate (%)</label>
+                    <input type="number" min="0" max="100" value={filters.minWinRate}
+                      onChange={e => setFilters(prev => ({ ...prev, minWinRate: parseInt(e.target.value) || 0 }))}
+                      style={inputStyle} />
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Opening Traps Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
               {filteredTraps.map((trap) => (
-                <div
-                  key={trap.id}
-                  onClick={() => handleTrapSelect(trap.id)}
-                  className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer overflow-hidden"
-                >
-                  {/* Chess Position Preview at Top */}
-                  <div className="bg-muted p-4">
+                <div key={trap.id} onClick={() => handleTrapSelect(trap.id)}
+                  className="rounded-xl cursor-pointer overflow-hidden transition-all duration-200"
+                  style={{ background: "linear-gradient(180deg, #0f1629 0%, #111d3a 100%)", border: "1px solid rgba(239,68,68,0.25)" }}
+                  onMouseEnter={e => {
+                    (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(239,68,68,0.6)";
+                    (e.currentTarget as HTMLDivElement).style.transform = "translateY(-2px)";
+                    (e.currentTarget as HTMLDivElement).style.boxShadow = "0 8px 25px rgba(239,68,68,0.15)";
+                  }}
+                  onMouseLeave={e => {
+                    (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(239,68,68,0.25)";
+                    (e.currentTarget as HTMLDivElement).style.transform = "none";
+                    (e.currentTarget as HTMLDivElement).style.boxShadow = "none";
+                  }}>
+                  <div style={{ background: "#080d18", padding: "12px" }}>
                     <ChessBoardPreview fen={trap.fen} />
                   </div>
-                  
-                  <div className="p-6">
-                    <div className="mb-3">
-                      <h3 className="text-lg font-semibold text-foreground mb-2">{trap.name}</h3>
-                      <div className="flex items-center space-x-2">
-                        <span className={`px-2 py-1 rounded text-xs font-medium ${
-                          trap.difficulty === 'Beginner' ? 'bg-green-100 text-green-800' :
-                          trap.difficulty === 'Intermediate' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-red-100 text-red-800'
-                        }`}>
-                          {trap.difficulty}
-                        </span>
-                        <span className="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium">
-                          🪤 {trap.variations?.length || 0} traps
-                        </span>
+                  <div className="p-4">
+                    <h3 className="text-sm font-bold font-cinzel mb-2" style={{ color: "#f0e6c8" }}>{trap.name}</h3>
+                    <div className="flex flex-wrap gap-1 mb-3">
+                      <span className="px-2 py-0.5 rounded text-xs font-semibold" style={difficultyBadge(trap.difficulty)}>
+                        {trap.difficulty}
+                      </span>
+                      <span className="px-2 py-0.5 rounded text-xs font-semibold"
+                        style={{ background: "rgba(239,68,68,0.12)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.25)" }}>
+                        🪤 {trap.variations?.length || 0} traps
+                      </span>
+                    </div>
+                    <p className="text-xs mb-3 line-clamp-2" style={{ color: "rgba(226,232,240,0.55)" }}>{trap.description}</p>
+                    <div className="space-y-1 text-xs">
+                      <div className="flex justify-between">
+                        <span style={{ color: "rgba(226,232,240,0.55)" }}>White Success:</span>
+                        <span className="font-semibold" style={{ color: "#10b981" }}>{trap.whiteWinRate}%</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span style={{ color: "rgba(226,232,240,0.55)" }}>Black Success:</span>
+                        <span className="font-semibold" style={{ color: "#ef4444" }}>{trap.blackWinRate}%</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span style={{ color: "rgba(226,232,240,0.55)" }}>Popularity:</span>
+                        <span className="font-semibold" style={{ color: "#06b6d4" }}>{trap.popularity}%</span>
                       </div>
                     </div>
-                    
-                    <p className="text-muted-foreground text-sm mb-4 line-clamp-2">{trap.description}</p>
-                    
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600">White Success:</span>
-                        <div className="flex items-center">
-                          <TrendingUp size={14} className="text-green-500 mr-1" />
-                          <span className="font-medium text-green-600">{trap.whiteWinRate}%</span>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600">Black Success:</span>
-                        <div className="flex items-center">
-                          <TrendingUp size={14} className="text-red-500 mr-1" />
-                          <span className="font-medium text-red-600">{trap.blackWinRate}%</span>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600">Popularity:</span>
-                        <span className="font-medium text-blue-600">{trap.popularity}%</span>
-                      </div>
-                    </div>
-                    
-                    <div className="mt-4 pt-4 border-t border-gray-200">
-                      <div className="text-xs text-gray-500">
-                        <strong>Setup:</strong> {trap.moves.slice(0, 3).join(", ")}
-                        {trap.moves.length > 3 && "..."}
-                      </div>
+                    <div className="mt-3 pt-3 text-xs" style={{ borderTop: "1px solid rgba(239,68,68,0.15)", color: "rgba(239,68,68,0.55)" }}>
+                      <strong>Setup:</strong> {trap.moves.slice(0, 3).join(", ")}{trap.moves.length > 3 && "..."}
                     </div>
                   </div>
                 </div>
@@ -367,12 +368,10 @@ export default function TrapsPage() {
             </div>
 
             {filteredTraps.length === 0 && (
-              <div className="text-center py-12">
-                <div className="text-gray-500">
-                  <div className="text-4xl mb-4">🔍</div>
-                  <h3 className="text-lg font-semibold mb-2">No traps found</h3>
-                  <p>Try adjusting your filters to see more results.</p>
-                </div>
+              <div className="text-center py-16">
+                <div className="text-5xl mb-4">🔍</div>
+                <h3 className="text-xl font-cinzel font-semibold mb-2" style={{ color: "#f0e6c8" }}>No traps found</h3>
+                <p style={{ color: "rgba(245,158,11,0.5)" }}>Try adjusting your filters to see more results.</p>
               </div>
             )}
           </div>
@@ -380,4 +379,4 @@ export default function TrapsPage() {
       )}
     </div>
   );
-} 
+}
