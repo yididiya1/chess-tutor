@@ -87,7 +87,9 @@ export default function OpeningBoard({ openingLine, playerSide }: OpeningBoardPr
       if (!result && computerMoveStr.length >= 4) {
         const from = computerMoveStr.substring(0, 2);
         const to = computerMoveStr.substring(2, 4);
-        result = gameCopy.move({ from, to });
+        const promoMatch = computerMoveStr.match(/=([QRBN])/i);
+        const promotion = promoMatch ? promoMatch[1].toLowerCase() : 'q';
+        result = gameCopy.move({ from, to, promotion });
       }
       
       if (result) {
@@ -206,10 +208,14 @@ export default function OpeningBoard({ openingLine, playerSide }: OpeningBoardPr
   }
 
   function onDrop(sourceSquare: string, targetSquare: string) {
+    const expectedMove = openingLine.moves[currentMoveIndex];
+    const promoMatch = expectedMove?.match(/=([QRBN])/i);
+    const promotion = promoMatch ? promoMatch[1].toLowerCase() : 'q';
+
     const move = makeAMove({
       from: sourceSquare,
       to: targetSquare,
-      promotion: "q",
+      promotion,
     });
 
     if (move === null) return false;
