@@ -12,20 +12,10 @@
     "description": "Common traps in the Italian Game that can catch unprepared opponents.",
     "variations": [
       {
-        "id": 10,
-        "name": "Trap 1",
-        "moves": ["e4", "e5", "Nf3", "Nc6", "Bc4", "Bc5", "c3", "d6", "d4", "Bb6", "dxe5", "Nxe5", "Nxe5", "dxe5","Bxf7+","Kxf7","Qxd8"],
-        "fen": "r1bQ2nr/ppp2kpp/1b6/4p3/4P3/2P5/PP3PPP/RNB1K2R b KQ - 0 9",
-        "whiteWinRate": 100.0,
-        "blackWinRate": 0.0,
-        "drawRate": 0.0,
-        "description": "A classic tactical trap leading to forced mate if Black falls for it."
-      },
-      {
-        "id": 111,
-        "name": "Trap 2",
-        "moves": ["e4", "e5", "Nf3", "Nc6", "Bc4", "Bc5", "c3", "d6", "d4", "exd4", "cxd4", "Bb6", "d5","Na5", "Bd3","c6","b4"],
-        "fen": "r1bqk1nr/pp3ppp/1bpp4/n2P4/1P2P3/3B1N2/P4PPP/RNBQK2R b KQkq - 0 9",
+        "id": 14,
+        "name": "Blackburne-Shilling Gambit",
+        "moves": ["e4", "e5", "Nf3", "Nc6", "Bc4", "Nd4", "Nxe5", "Qg5", "Nxf7", "Qxg2", "Rf1", "Qxe4+","Be2", "Nf3#"],
+        "fen": "r1b1kbnr/pppp1Npp/8/8/4q3/5n2/PPPPBP1P/RNBQKR2 w Qkq - 2 8",
         "whiteWinRate": 100.0,
         "blackWinRate": 0.0,
         "drawRate": 0.0,
@@ -42,16 +32,6 @@
         "description": "A classic tactical trap leading to forced mate if Black falls for it."
       },
       {
-        "id": 12,
-        "name": "Blackburne Shilling Trap",
-        "moves": ["e4", "e5", "Nf3", "Nc6", "Bc4", "Nd4", "Nxe5", "Qg5", "Nxf7", "Qxg2", "Rf1", "Qxe4+", "Be2", "Nf3#"],
-        "fen": "r1b1kbnr/ppp3pp/8/8/2B1q3/5n2/PPPPBPPP/RNBQ1RK1 w q - 1 8",
-        "whiteWinRate": 0.0,
-        "blackWinRate": 100.0,
-        "drawRate": 0.0,
-        "description": "A dangerous counter-trap for Black against over-aggressive White play."
-      },
-      {
         "id": 13,
         "name": "Knight Fork Trap",
         "moves": ["e4", "e5","Nf3", "Nc6","Bc4", "Bc5","c3", "d6","d4", "Bb6","dxe5", "Nxe5","Nxe5", "dxe5","Bxf7+", "Kxf7","Qxd8"],
@@ -60,19 +40,6 @@
         "blackWinRate": 10.0,
         "drawRate": 5.0,
         "description": "A tactical sequence involving knight forks and piece sacrifices."
-      },
-      {
-        "id": 14,
-        "name": "Pawn Storm Trap",
-        "moves": ["e4", "e5", "Nf3", "Nc6", "Bc4", "d6", "d3", "f5", "exf5", "Bxf5", "Ng5", "Nh6", "Qh5+", "g6", "Qf3"],
-        "fen": "r1bqkb1r/pppp1ppp/3p4/n3P3/1PB1P3/3B4/P1P2PPP/RN1QK2R b KQkq - 0 8",
-        "whiteWinRate": 75.0,
-        "blackWinRate": 20.0,
-        "drawRate": 5.0,
-        "description": "A trap involving pawn advances and piece pressure.",
-        "solution": ["c6", "b4"],
-        "computerResponse": ["c6"],
-        "playerColor": "white"
       },
       {
         "id": 15,
@@ -194,9 +161,19 @@
     "variations": [
       {
         "id": 21,
-        "name": "Elephant Trap",
-        "moves": ["d4", "d5", "c4", "e6", "Nc3", "Nf6", "Bg5", "Nbd7", "cxd5", "exd5", "Nxd5", "Nxd5", "Bxd8", "Bb4+", "Qd2", "Bxd2+", "Kxd2", "Kxd8"],
+        "name": "Albin Countergambit",
+        "moves": ["d4","d5","c4","e5","dxe5","d4","e3","Bb4+","Bd2","dxe3","Bxb4","exf2+","Ke2","fxg1=N+","Rxg1","Bg4+","Kf2","Qxd1"],
         "fen": "r1b1k2r/pppn1ppp/8/3n1B2/3P4/8/PP2PPPP/R3KBNR w KQkq - 0 8",
+        "whiteWinRate": 85.0,
+        "blackWinRate": 10.0,
+        "drawRate": 5.0,
+        "description": "A trap where Black can win White's queen if White plays carelessly."
+      },
+      {
+        "id": 22,
+        "name": "The Elephant Trap",
+        "moves": ["d4","d5","c4","e6","Nc3","Nf6","Bg5","Nbd7","cxd5","exd5","Nxd5","Nxd5","Bxd8","Bb4+","Qd2","Bxd2+","Kxd2","Kxd8"],
+        "fen": "r1bk3r/pppn1ppp/8/3n4/3P4/8/PP1KPPPP/R4BNR w - - 0 10",
         "whiteWinRate": 85.0,
         "blackWinRate": 10.0,
         "drawRate": 5.0,
@@ -266,13 +243,105 @@
     "variations": [
       {
         "id": 51,
-        "name": "Noah's Ark Trap",
-        "moves": ["e4", "e5", "Nf3", "Nc6", "Bb5", "a6", "Ba4", "d6", "d4", "b5", "Bb3", "Nxd4", "Nxd4", "exd4", "Qxd4", "c5"],
+        "name": "Fishing Pole Trap",
+        "moves": ["e4", "e5", "Nf3", "Nc6", "Bb5", "Nf6", "O-O", "Ng4", "h3", "h5", "hxg4", "hxg4", "Nh2", "Qh4", "f3", "g3", "Re1", "Qxh2+", "Kf1", "Nd4", "Bxd7+", "Bxd7", "d3", "Qh1#"],
         "fen": "r1bqkbnr/2p2ppp/p2p4/1p1p4/3QP3/1B6/PPP2PPP/RNB1K2R w KQkq c6 0 8",
         "whiteWinRate": 95.0,
         "blackWinRate": 3.0,
         "drawRate": 2.0,
         "description": "A famous trap where Black can win White's bishop with precise play."
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "name": "Scandinavian Defense Traps",
+    "moves": ["e4", "d5"],
+    "fen": "rnbqkbnr/ppp1pppp/8/3p4/4P3/8/PPPP1PPP/RNBQKBNR w KQkq d6 0 2",
+    "whiteWinRate": 66.4,
+    "blackWinRate": 22.1,
+    "drawRate": 11.5,
+    "popularity": 74,
+    "difficulty": "Intermediate",
+    "description": "Sharp tactical traps in the Scandinavian Defense (1.e4 d5), one of Black's oldest responses to e4.",
+    "variations": [
+      {
+        "id": 71,
+        "name": "Portuguese Variation Trap",
+        "moves": ["e4","d5","exd5","Nf6","Bc4","e6","dxe6","Bxe6","Bb3","Nc6","Nf3","Bc5","O-O","O-O","d3","Ng4","Re1","Nxf2"],
+        "fen": "r2q1rk1/ppp2ppp/2n1b3/2b5/8/1B1P1N2/PPP2nPP/RNBQR1K1 w - - 0 10",
+        "whiteWinRate": 5.0,
+        "blackWinRate": 92.0,
+        "drawRate": 3.0,
+        "description": "Black sacrifices a pawn to open lines and wins material spectacularly with Nxf2, forking queen and rook.",
+        "solution": ["Rxe2", "Nxd3"],
+        "computerResponse": ["Rxe2"],
+        "playerColor": "black"
+      },
+      {
+        "id": 72,
+        "name": "Main Line Qa5 Trap",
+        "moves": ["e4","d5","exd5","Qxd5","Nc3","Qa5","d4","Nf6","Bc4","Bf5","Nf3","e6","O-O","Bb4","Ne2","Bxc3","bxc3","Ne4"],
+        "fen": "rn2k2r/ppp2ppp/4p3/q4b2/2BPn3/2P2N2/P1P1NPPP/R1BQ1RK1 w kq - 1 10",
+        "whiteWinRate": 10.0,
+        "blackWinRate": 85.0,
+        "drawRate": 5.0,
+        "description": "Black lures White into doubling pawns, then plunges the knight into e4 with a devastating double attack.",
+        "solution": ["Ne4", "Qd3", "Nxc3"],
+        "computerResponse": ["Qd3"],
+        "playerColor": "black"
+      },
+      {
+        "id": 73,
+        "name": "Icelandic Gambit Trap",
+        "moves": ["e4","d5","exd5","Nf6","c4","e6","dxe6","Bxe6","d4","Bb4+","Nc3","Ne4","Qd3","Qh4","g3","Nxg3","hxg3","Qxh1"],
+        "fen": "rn2k2r/ppp2ppp/4b3/8/1bPP4/2NQ2P1/PP3P2/R1B1KBNq w Qkq - 0 10",
+        "whiteWinRate": 3.0,
+        "blackWinRate": 95.0,
+        "drawRate": 2.0,
+        "description": "Black gambits a pawn for explosive piece activity — the knight sacrifice on g3 wins the h1 rook.",
+        "solution": ["Nxg3", "hxg3", "Qxh1"],
+        "computerResponse": ["hxg3"],
+        "playerColor": "black"
+      },
+      {
+        "id": 74,
+        "name": "Gubinsky-Melts Defence Trap",
+        "moves": ["e4","d5","exd5","Qxd5","Nc3","Qa5","d4","c6","Nf3","Nf6","Bc4","Bf5","Ne5","e6","g4","Bg6","h4","h6","h5","Bh7","Nxf7"],
+        "fen": "rn2kb1r/pp3Npb/2p1pn1p/q6P/2BP2P1/2N5/PPP2P2/R1BQK2R b KQkq - 0 11",
+        "whiteWinRate": 92.0,
+        "blackWinRate": 5.0,
+        "drawRate": 3.0,
+        "description": "White's flank pawn storm creates the conditions for a bone-crushing knight sacrifice on f7.",
+        "solution": ["Nxf7", "Kxf7", "Qf3+"],
+        "computerResponse": ["Kxf7"],
+        "playerColor": "white"
+      },
+      {
+        "id": 75,
+        "name": "Tennison Gambit Trap",
+        "moves": ["e4","d5","Nf3","dxe4","Ng5","Nf6","Bc4","e6","Nxf7","Kxf7","Bxe6+","Kxe6","Qf3"],
+        "fen": "rnbq1b1r/ppp3pp/4kn2/8/4p3/5Q2/PPPP1PPP/RNB1K2R b KQ - 1 7",
+        "whiteWinRate": 88.0,
+        "blackWinRate": 8.0,
+        "drawRate": 4.0,
+        "description": "White sacrifices a bishop and knight to lure the Black king into the center then picks up material with Qf3+.",
+        "solution": ["Nxf7", "Kxf7", "Bxe6+", "Kxe6", "Qf3"],
+        "computerResponse": ["Kxf7", "Kxe6"],
+        "playerColor": "white"
+      },
+      {
+        "id": 76,
+        "name": "Bronstein-Larsen Trap",
+        "moves": ["e4","d5","exd5","Nf6","d4","Nxd5","c4","Nb6","Nf3","g6","Be2","Bg7","O-O","O-O","Nc3","Bg4","h3","Bxf3","Bxf3","Nc6","d5","Ne5"],
+        "fen": "r2q1rk1/ppp1ppbp/1n4p1/3Pn3/2P5/2N2B1P/PP3PP1/R1BQ1RK1 w - - 1 12",
+        "whiteWinRate": 12.0,
+        "blackWinRate": 82.0,
+        "drawRate": 6.0,
+        "description": "Black surrenders the bishop pair to post the knight on e5, then the d5 advance backfires as Black gains strong outposts.",
+        "solution": ["Ne5", "Be2", "Nc4"],
+        "computerResponse": ["Be2"],
+        "playerColor": "black"
       }
     ]
   },
