@@ -1,9 +1,14 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Chessboard } from "react-chessboard";
 import { Chess, Square } from "chess.js";
-import { useUserProgress } from "@/hooks/useUserProgress";
+import { CheckCircle2, Flame, TrendingUp, TrendingDown } from "lucide-react";
+import {
+  useUserProgress,
+  type PuzzleRatingOutcome,
+  type PuzzleStreakOutcome,
+} from "@/hooks/useUserProgress";
 
 interface Puzzle {
   fen: string;
@@ -15,9 +20,22 @@ interface Puzzle {
 interface ChessBoardProps {
   position: string;
   puzzle: Puzzle;
+  onSolved?: () => void;
+  onAttempt?: () => void;
+  onProgressUpdate?: (
+    rating: PuzzleRatingOutcome | null,
+    streak: PuzzleStreakOutcome | null
+  ) => void;
 }
 
-export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
+function formatDuration(seconds: number): string {
+  if (seconds < 60) return `${seconds}s`;
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return s === 0 ? `${m}m` : `${m}m ${s}s`;
+}
+
+export default function ChessBoard({ position, puzzle, onSolved, onAttempt, onProgressUpdate }: ChessBoardProps) {
   const [game, setGame] = useState(new Chess(position));
   const [gamePosition, setGamePosition] = useState(position);
   const [moveHistory, setMoveHistory] = useState<string[]>([]);
@@ -29,11 +47,35 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
   const [isPlayerTurn, setIsPlayerTurn] = useState(false);
   const [playerColor, setPlayerColor] = useState<'white' | 'black'>('white');
   const [startTime, setStartTime] = useState<Date>(new Date());
+  const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
+  const [mistakes, setMistakes] = useState(0);
+  const [solvedStats, setSolvedStats] = useState<{
+    timeSpent: number;
+    mistakes: number;
+    rating: PuzzleRatingOutcome | null;
+    streak: PuzzleStreakOutcome | null;
+  } | null>(null);
   
   const { updatePuzzleProgress } = useUserProgress();
 
   const boardContainerRef = useRef<HTMLDivElement>(null);
   const [boardWidth, setBoardWidth] = useState(480);
+
+  // Track every pending setTimeout so they can be canceled on puzzle change or unmount.
+  // Without this, callbacks like the 1s computer-move delay or the 5s hint timeout
+  // can fire after the component unmounts (e.g. when navigating away mid-puzzle),
+  // triggering setState-on-unmounted-component errors during route transitions.
+  const timersRef = useRef<NodeJS.Timeout[]>([]);
+  const trackedTimeout = useCallback((fn: () => void, ms: number) => {
+    const id = setTimeout(fn, ms);
+    timersRef.current.push(id);
+    return id;
+  }, []);
+  const clearAllTimers = useCallback(() => {
+    timersRef.current.forEach(clearTimeout);
+    timersRef.current = [];
+  }, []);
+  useEffect(() => () => clearAllTimers(), [clearAllTimers]);
 
   useEffect(() => {
     if (!boardContainerRef.current) return;
@@ -51,52 +93,42 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
   const puzzleMoves = puzzle.moves.split(' ').filter(move => move.trim() !== '');
 
   useEffect(() => {
-    // Clear any pending timeouts to prevent state conflicts
-    const timeoutIds: NodeJS.Timeout[] = [];
-    
-    const resetPuzzleState = () => {
-      const newGame = new Chess(position);
-      setGame(newGame);
-      setGamePosition(position);
-      setMoveHistory([]);
-      setCurrentMoveIndex(0);
-      setIsComplete(false);
-      setShowHint(false);
-      setHintArrow(null);
-      setIsPlayerTurn(false);
-      setMessage("Computer is making the first move...");
-      setStartTime(new Date()); // Reset timer when puzzle starts
-      
-      // Determine player color based on whose turn it is to move
-      // If it's Black's turn in the FEN, then player is White (computer is Black)
-      // If it's White's turn in the FEN, then player is Black (computer is White)
-      const currentTurn = newGame.turn();
-      console.log("currentTurn", currentTurn);
-      console.log("FEN position:", position);
-      const determinedPlayerColor = currentTurn === 'b' ? 'white' : 'black';
-      console.log("determinedPlayerColor", determinedPlayerColor);
-      setPlayerColor(determinedPlayerColor);
-      
-      // Computer always makes the first move
-      if (puzzleMoves.length > 0) {
-        const timeoutId = setTimeout(() => {
-          makeComputerMove(0, newGame);
-        }, 1000);
-        timeoutIds.push(timeoutId);
-      }
-      
-      // Update message to show correct player color
-      setTimeout(() => {
-        setMessage(`${determinedPlayerColor === 'white' ? 'White' : 'Black'} to play - Find the best move!`);
-      }, 1500); // Show after computer move completes
-    };
-    
-    resetPuzzleState();
-    
-    // Cleanup function to clear timeouts when component unmounts or dependencies change
-    return () => {
-      timeoutIds.forEach(id => clearTimeout(id));
-    };
+    // Cancel anything pending from the previous puzzle before scheduling new work.
+    clearAllTimers();
+
+    const newGame = new Chess(position);
+    setGame(newGame);
+    setGamePosition(position);
+    setMoveHistory([]);
+    setCurrentMoveIndex(0);
+    setIsComplete(false);
+    setShowHint(false);
+    setHintArrow(null);
+    setIsPlayerTurn(false);
+    setMessage("Computer is making the first move...");
+    setStartTime(new Date());
+    setFeedback(null);
+    setMistakes(0);
+    setSolvedStats(null);
+
+    // If it's Black's turn in the FEN, then player is White (computer is Black)
+    // If it's White's turn in the FEN, then player is Black (computer is White)
+    const determinedPlayerColor = newGame.turn() === 'b' ? 'white' : 'black';
+    setPlayerColor(determinedPlayerColor);
+
+    // Computer always makes the first move
+    if (puzzleMoves.length > 0) {
+      trackedTimeout(() => {
+        makeComputerMove(0, newGame);
+      }, 1000);
+    }
+
+    // Update message to show correct player color (after computer move completes)
+    trackedTimeout(() => {
+      setMessage(`${determinedPlayerColor === 'white' ? 'White' : 'Black'} to play — find the best move.`);
+    }, 1500);
+
+    return () => clearAllTimers();
   }, [position, puzzle.fen, puzzle.moves]); // Use puzzle.fen and puzzle.moves instead of puzzle.id
 
   function makeComputerMove(moveIndex: number, gameCopy?: Chess) {
@@ -139,19 +171,29 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
         // Check if puzzle is complete (all moves played)
         if (moveIndex + 1 >= puzzleMoves.length) {
           const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
-          setMessage("🎉 Puzzle completed! Well done!");
+          setMessage("Puzzle completed.");
           setIsComplete(true);
           setIsPlayerTurn(false);
-          
-          // Track puzzle completion
+          setSolvedStats({ timeSpent, mistakes, rating: null, streak: null });
+
           updatePuzzleProgress({
-            puzzleId: puzzle.fen, // Using FEN as unique puzzle ID
+            puzzleId: puzzle.fen,
             solved: true,
-            timeSpent
-          }).catch(error => console.error('Failed to track puzzle progress:', error));
+            timeSpent,
+            mistakes,
+            puzzleRating: puzzle.rating,
+          })
+            .then(res => {
+              setSolvedStats(prev =>
+                prev ? { ...prev, rating: res.rating ?? null, streak: res.streak ?? null } : prev
+              );
+              onProgressUpdate?.(res.rating ?? null, res.streak ?? null);
+            })
+            .catch(error => console.error('Failed to track puzzle progress:', error));
+          onSolved?.();
         } else {
           // It's now player's turn
-          setMessage(`${playerColor === 'white' ? 'White' : 'Black'} to play - Find the best move!`);
+          setMessage(`${playerColor === 'white' ? 'White' : 'Black'} to play — find the best move.`);
           setIsPlayerTurn(true);
         }
       } else {
@@ -180,14 +222,14 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
         
         setHintArrow([from as Square, to as Square]);
         setShowHint(true);
-        setMessage("💡 Hint: Look at the highlighted move!");
-        
+        setMessage("Hint shown — look at the highlighted move.");
+
         // Hide hint after 5 seconds
-        setTimeout(() => {
+        trackedTimeout(() => {
           setHintArrow(null);
           setShowHint(false);
           if (!isComplete && isPlayerTurn) {
-            setMessage(`${playerColor === 'white' ? 'White' : 'Black'} to play - Find the best move!`);
+            setMessage(`${playerColor === 'white' ? 'White' : 'Black'} to play — find the best move.`);
           }
         }, 5000);
       } catch (error) {
@@ -245,7 +287,8 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
     
     // Check if the move matches exactly
     const isCorrectMove = expectedMove === playerMoveStr;
-    
+    onAttempt?.();
+
     if (isCorrectMove) {
       console.log(`✅ Correct move!`);
       
@@ -259,25 +302,40 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
       // Check if puzzle is complete
       if (currentMoveIndex + 1 >= puzzleMoves.length) {
         const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
-        setMessage("🎉 Puzzle completed! Well done!");
+        setMessage("Puzzle completed.");
         setIsComplete(true);
-        
-        // Track puzzle completion
+        setSolvedStats({ timeSpent, mistakes, rating: null, streak: null });
+
         updatePuzzleProgress({
-          puzzleId: puzzle.fen, // Using FEN as unique puzzle ID
+          puzzleId: puzzle.fen,
           solved: true,
-          timeSpent
-        }).catch(error => console.error('Failed to track puzzle progress:', error));
+          timeSpent,
+          mistakes,
+          puzzleRating: puzzle.rating,
+        })
+          .then(res => {
+            setSolvedStats(prev =>
+              prev ? { ...prev, rating: res.rating ?? null, streak: res.streak ?? null } : prev
+            );
+            onProgressUpdate?.(res.rating ?? null, res.streak ?? null);
+          })
+          .catch(error => console.error('Failed to track puzzle progress:', error));
+        onSolved?.();
       } else {
         // Computer should make the next move
-        setMessage("✅ Correct! Computer is responding...");
-        setTimeout(() => {
+        setMessage("Correct. Computer is responding…");
+        setFeedback('correct');
+        trackedTimeout(() => setFeedback(null), 1200);
+        trackedTimeout(() => {
           makeComputerMove(currentMoveIndex + 1, gameCopy);
         }, 1000);
       }
     } else {
-      console.log(`❌ Incorrect move! Player: "${playerMoveStr}", Expected: "${expectedMove}"`);
-      setMessage("❌ Not the best move. Try again!");
+      console.log(`Incorrect move! Player: "${playerMoveStr}", Expected: "${expectedMove}"`);
+      setMessage("Not the best move. Try again.");
+      setFeedback('incorrect');
+      setMistakes(m => m + 1);
+      trackedTimeout(() => setFeedback(null), 1200);
       return null;
     }
     
@@ -309,6 +367,7 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
   }
 
   function resetPuzzle() {
+    clearAllTimers();
     const newGame = new Chess(position);
     setGame(newGame);
     setGamePosition(position);
@@ -320,6 +379,9 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
     setIsPlayerTurn(false);
     setMessage("Computer is making the first move...");
     setStartTime(new Date()); // Reset timer when puzzle resets
+    setFeedback(null);
+    setMistakes(0);
+    setSolvedStats(null);
     
     // Determine player color based on whose turn it is to move
     const currentTurn = newGame.turn();
@@ -328,7 +390,7 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
     
     // Computer always makes the first move
     if (puzzleMoves.length > 0) {
-      setTimeout(() => {
+      trackedTimeout(() => {
         makeComputerMove(0, newGame);
       }, 1000);
     }
@@ -338,20 +400,19 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
     ? Math.min(100, (currentMoveIndex / puzzleMoves.length) * 100)
     : 0;
 
-  const msgColor = isComplete ? '#10b981' : showHint ? '#06b6d4' : '#f0e6c8';
+  const boardFeedbackClass =
+    isComplete || feedback === 'correct'
+      ? 'border-success ring-2 ring-success/20'
+      : feedback === 'incorrect'
+      ? 'border-destructive ring-2 ring-destructive/20'
+      : '';
 
   return (
     <div className="flex gap-6 w-full items-start">
       {/* ── Board ─────────────────────────────────────────── */}
       <div
         ref={boardContainerRef}
-        className="flex-[3] min-w-0 rounded-xl overflow-hidden"
-        style={{
-          background: '#0a0f1c',
-          border: '1px solid rgba(245,158,11,0.2)',
-          boxShadow: '0 0 40px rgba(245,158,11,0.06)',
-          padding: '12px',
-        }}
+        className={`flex-[3] min-w-0 rounded-lg overflow-hidden bg-card border p-3 transition-colors duration-200 ${boardFeedbackClass}`}
       >
         <Chessboard
           position={gamePosition}
@@ -359,87 +420,124 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
           boardOrientation={playerColor}
           boardWidth={boardWidth}
           customBoardStyle={{ borderRadius: '6px' }}
-          customDarkSquareStyle={{ backgroundColor: '#2d4a22' }}
-          customLightSquareStyle={{ backgroundColor: '#8fb36a' }}
+          customDarkSquareStyle={{ backgroundColor: '#8b8170' }}
+          customLightSquareStyle={{ backgroundColor: '#ede9dd' }}
           customArrows={hintArrow ? [hintArrow] : []}
-          customArrowColor="rgba(245,158,11,0.85)"
+          customArrowColor="hsl(var(--primary))"
         />
       </div>
 
       {/* ── Right Panel ───────────────────────────────────── */}
       <div className="flex-[1] min-w-0 flex flex-col gap-4">
-        {/* Status message */}
-        <div
-          className="rounded-xl px-4 py-3"
-          style={{
-            background: 'rgba(245,158,11,0.06)',
-            border: '1px solid rgba(245,158,11,0.18)',
-          }}
-        >
-          <p className="text-sm font-rajdhani font-semibold leading-snug" style={{ color: msgColor }}>
-            {message}
-          </p>
-        </div>
+        {/* Status / Success */}
+        {isComplete && solvedStats ? (
+          <div className="panel px-4 py-4 border-success/40 bg-success/5">
+            <div className="flex items-center gap-2 mb-3">
+              <CheckCircle2 size={18} className="text-success" />
+              <h3 className="text-sm font-medium text-foreground">Puzzle solved</h3>
+            </div>
+            <div className="grid grid-cols-3 gap-2 mb-3">
+              <div>
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Time</p>
+                <p className="text-sm font-medium text-foreground mt-0.5">{formatDuration(solvedStats.timeSpent)}</p>
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Mistakes</p>
+                <p className={`text-sm font-medium mt-0.5 ${solvedStats.mistakes === 0 ? 'text-success' : 'text-foreground'}`}>
+                  {solvedStats.mistakes}
+                </p>
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Puzzle</p>
+                <p className="text-sm font-medium text-foreground mt-0.5">{puzzle.rating}</p>
+              </div>
+            </div>
+
+            {solvedStats.rating && (
+              <div className="flex items-center justify-between gap-3 pt-3 border-t border-success/30">
+                <div className="flex items-center gap-1.5">
+                  {solvedStats.rating.delta >= 0
+                    ? <TrendingUp size={14} className="text-success" />
+                    : <TrendingDown size={14} className="text-destructive" />}
+                  <span className="text-xs text-muted-foreground">Your rating</span>
+                  <span className="text-sm font-medium text-foreground">{solvedStats.rating.new}</span>
+                  <span className={`text-xs font-medium ${solvedStats.rating.delta >= 0 ? 'text-success' : 'text-destructive'}`}>
+                    {solvedStats.rating.delta >= 0 ? '+' : ''}{solvedStats.rating.delta}
+                  </span>
+                  {solvedStats.rating.speedBonus > 0 && (
+                    <span className="text-[10px] uppercase tracking-wider text-success ml-1">
+                      +{solvedStats.rating.speedBonus} speed
+                    </span>
+                  )}
+                </div>
+                {solvedStats.streak && (
+                  <div className="flex items-center gap-1 text-xs">
+                    <Flame size={12} className="text-success" />
+                    <span className="font-medium text-foreground">{solvedStats.streak.current}</span>
+                    <span className="text-muted-foreground">streak</span>
+                  </div>
+                )}
+              </div>
+            )}
+
+            <p className="text-xs text-muted-foreground mt-3">
+              {solvedStats.mistakes === 0
+                ? "Solved cleanly — no mistakes."
+                : solvedStats.mistakes === 1
+                ? "Solved with one wrong attempt."
+                : `Solved after ${solvedStats.mistakes} wrong attempts.`}
+            </p>
+          </div>
+        ) : (
+          <div className="panel px-4 py-3">
+            <p className={`text-sm font-medium leading-snug ${
+              feedback === 'incorrect' ? 'text-destructive' : feedback === 'correct' ? 'text-success' : 'text-foreground'
+            }`}>
+              {message}
+            </p>
+          </div>
+        )}
 
         {/* Progress */}
-        <div
-          className="rounded-xl px-4 py-4"
-          style={{
-            background: 'linear-gradient(135deg, #0a0f1e 0%, #0d1426 100%)',
-            border: '1px solid rgba(245,158,11,0.15)',
-          }}
-        >
+        <div className="panel px-4 py-4">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-xs font-cinzel font-semibold uppercase tracking-widest" style={{ color: 'rgba(245,158,11,0.6)' }}>
+            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Progress
             </span>
-            <span className="text-xs font-rajdhani font-semibold" style={{ color: '#f59e0b' }}>
+            <span className="text-xs font-medium text-foreground">
               {currentMoveIndex} / {puzzleMoves.length} moves
             </span>
           </div>
-          <div className="w-full rounded-full h-2" style={{ background: 'rgba(255,255,255,0.08)' }}>
+          <div className="w-full rounded-full h-1.5 bg-muted">
             <div
-              className="h-2 rounded-full transition-all duration-500"
-              style={{
-                width: `${progressPct}%`,
-                background: isComplete
-                  ? 'linear-gradient(90deg, #10b981, #34d399)'
-                  : 'linear-gradient(90deg, #f59e0b, #fbbf24)',
-                boxShadow: isComplete ? '0 0 8px #10b98180' : '0 0 8px #f59e0b60',
-              }}
+              className={`h-1.5 rounded-full transition-all duration-500 ${
+                isComplete ? 'bg-success' : 'bg-primary'
+              }`}
+              style={{ width: `${progressPct}%` }}
             />
           </div>
           {moveHistory.length > 0 && (
-            <p className="mt-2 text-xs font-rajdhani" style={{ color: 'rgba(226,232,240,0.4)' }}>
+            <p className="mt-2 text-xs text-muted-foreground">
               {moveHistory.join(' · ')}
             </p>
           )}
         </div>
 
         {/* Puzzle Info */}
-        <div
-          className="rounded-xl px-4 py-4 flex flex-col gap-3"
-          style={{
-            background: 'linear-gradient(135deg, #0a0f1e 0%, #0d1426 100%)',
-            border: '1px solid rgba(245,158,11,0.15)',
-          }}
-        >
-          <h3 className="text-xs font-cinzel font-semibold uppercase tracking-widest mb-1" style={{ color: 'rgba(245,158,11,0.6)' }}>
+        <div className="panel px-4 py-4 flex flex-col gap-2.5">
+          <h3 className="text-xs font-medium uppercase tracking-wider mb-1 text-muted-foreground">
             Puzzle Info
           </h3>
 
           {[
-            { label: 'Type',       value: puzzle.type,                                    accent: '#06b6d4' },
-            { label: 'Rating',     value: `★ ${puzzle.rating}`,                           accent: '#f59e0b' },
-            { label: 'Playing as', value: playerColor === 'white' ? '⚪ White' : '⚫ Black', accent: playerColor === 'white' ? '#e2e8f0' : '#94a3b8' },
-            { label: 'Status',     value: isComplete ? '✅ Solved' : '🎯 In Progress',    accent: isComplete ? '#10b981' : '#94a3b8' },
-          ].map(({ label, value, accent }) => (
+            { label: 'Type',       value: puzzle.type },
+            { label: 'Rating',     value: puzzle.rating.toString() },
+            { label: 'Playing as', value: playerColor === 'white' ? 'White' : 'Black' },
+            { label: 'Status',     value: isComplete ? 'Solved' : 'In Progress' },
+          ].map(({ label, value }) => (
             <div key={label} className="flex justify-between items-center">
-              <span className="text-xs font-rajdhani" style={{ color: 'rgba(226,232,240,0.45)' }}>{label}</span>
-              <span
-                className="text-xs font-rajdhani font-semibold px-2 py-0.5 rounded-full"
-                style={{ background: `${accent}18`, color: accent, border: `1px solid ${accent}30` }}
-              >
+              <span className="text-xs text-muted-foreground">{label}</span>
+              <span className="text-xs font-medium px-2 py-0.5 rounded border bg-muted text-foreground">
                 {value}
               </span>
             </div>
@@ -452,29 +550,16 @@ export default function ChessBoard({ position, puzzle }: ChessBoardProps) {
             <button
               onClick={showHintArrow}
               disabled={showHint || !isPlayerTurn}
-              className="flex-1 py-2 rounded-lg text-xs font-cinzel font-semibold uppercase tracking-wider transition-all duration-200"
-              style={{
-                background: showHint || !isPlayerTurn ? 'rgba(255,255,255,0.04)' : 'rgba(245,158,11,0.12)',
-                border: `1px solid ${showHint || !isPlayerTurn ? 'rgba(255,255,255,0.08)' : 'rgba(245,158,11,0.4)'}`,
-                color: showHint || !isPlayerTurn ? 'rgba(226,232,240,0.25)' : '#f59e0b',
-                cursor: showHint || !isPlayerTurn ? 'not-allowed' : 'pointer',
-              }}
+              className="btn-outline flex-1 text-xs disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              💡 Hint
+              Hint
             </button>
           )}
           <button
             onClick={resetPuzzle}
-            className="flex-1 py-2 rounded-lg text-xs font-cinzel font-semibold uppercase tracking-wider transition-all duration-200"
-            style={{
-              background: 'rgba(6,182,212,0.1)',
-              border: '1px solid rgba(6,182,212,0.35)',
-              color: '#06b6d4',
-            }}
-            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(6,182,212,0.2)'; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(6,182,212,0.1)'; }}
+            className="btn-outline flex-1 text-xs"
           >
-            ↺ Reset
+            Reset
           </button>
         </div>
       </div>

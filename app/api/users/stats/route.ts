@@ -60,6 +60,7 @@ export async function GET() {
         currentStreak: 0,
         bestStreak: 0,
         averageRating: 0,
+        puzzleRating: 1200,
         totalTimeSpent: 0,
       },
       summary: {

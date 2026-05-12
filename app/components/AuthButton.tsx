@@ -7,8 +7,8 @@ export default function AuthButton() {
 
   if (status === "loading") {
     return (
-      <div className="px-4 py-2 bg-gray-200 rounded-lg animate-pulse">
-        Loading...
+      <div className="px-4 py-2 bg-muted rounded-lg animate-pulse text-muted-foreground">
+        Loading…
       </div>
     )
   }
@@ -16,12 +16,12 @@ export default function AuthButton() {
   if (session) {
     return (
       <div className="flex items-center space-x-4">
-        <div className="text-white">
+        <div className="text-foreground">
           Welcome, {session.user?.name || session.user?.email}!
         </div>
         <button
           onClick={() => signOut()}
-          className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+          className="btn-outline"
         >
           Sign Out
         </button>
@@ -32,7 +32,7 @@ export default function AuthButton() {
   return (
     <button
       onClick={() => signIn('google')}
-      className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+      className="btn-primary"
     >
       Sign In with Google
     </button>

@@ -41,40 +41,32 @@ export default function EvaluationBar({ evaluation, className = "" }: Evaluation
 
   return (
     <div className={`flex flex-col items-center ${className}`}>
-      <div className="text-xs font-mono font-bold mb-1" style={{ color: displayEval >= 0 ? '#e2e8f0' : '#94a3b8' }}>
+      <div className="text-xs font-mono font-medium mb-1 text-foreground">
         {formatEvaluation(displayEval)}
       </div>
 
       <div
-        className="relative overflow-hidden"
+        className="relative overflow-hidden rounded-md border bg-muted"
         style={{
           width: 28,
           height: 384,
-          borderRadius: 6,
-          background: '#1a2035',
-          border: '1px solid rgba(245,158,11,0.2)',
         }}
       >
         {/* White advantage (top, light) */}
         <div
           className="absolute top-0 left-0 w-full transition-all duration-300 ease-out"
-          style={{ height: `${whitePercentage}%`, background: 'rgba(240,230,200,0.85)' }}
+          style={{ height: `${whitePercentage}%`, background: '#ede9dd' }}
         />
         {/* Black advantage (bottom, dark) */}
         <div
           className="absolute bottom-0 left-0 w-full transition-all duration-300 ease-out"
-          style={{ height: `${blackPercentage}%`, background: 'rgba(15,20,40,0.95)' }}
+          style={{ height: `${blackPercentage}%`, background: '#3a3a3a' }}
         />
         {/* Centre line */}
-        <div className="absolute top-1/2 left-0 w-full" style={{ height: 1, background: 'rgba(245,158,11,0.4)', transform: 'translateY(-0.5px)' }} />
-        {/* +/- markers */}
-        <div className="absolute inset-0 flex flex-col justify-between py-1.5 pointer-events-none">
-          <div className="text-xs font-bold text-center" style={{ color: 'rgba(30,30,50,0.8)' }}>+</div>
-          <div className="text-xs font-bold text-center" style={{ color: 'rgba(240,230,200,0.6)' }}>−</div>
-        </div>
+        <div className="absolute top-1/2 left-0 w-full bg-foreground/40" style={{ height: 1, transform: 'translateY(-0.5px)' }} />
       </div>
 
-      <div className="text-xs font-rajdhani mt-1" style={{ color: 'rgba(226,232,240,0.35)' }}>
+      <div className="text-xs mt-1 text-muted-foreground">
         {displayEval >= 0 ? 'White' : 'Black'}
       </div>
     </div>

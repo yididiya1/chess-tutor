@@ -5,45 +5,23 @@ import { ChevronLeft, Filter, TrendingUp, BookOpen } from "lucide-react";
 import Link from "next/link";
 import OpeningBoard from "../components/OpeningBoard";
 import ChessBoardPreview from "../components/ChessBoardPreview";
-import openingsData from "../../data/openings.json";
+import openingsRaw from "../../data/openings.json";
+import type { Opening } from "../types/openings";
 
-const darkPage: React.CSSProperties = { background: "#080d18", minHeight: "100vh" };
-const darkFlex: React.CSSProperties = { background: "#080d18", height: "100vh", display: "flex" };
+const openingsData = openingsRaw as Opening[];
 
-const leftPanel: React.CSSProperties = {
-  width: "320px",
-  background: "linear-gradient(180deg, #0f1629 0%, #0a1120 100%)",
-  borderRight: "1px solid rgba(245,158,11,0.25)",
-  display: "flex",
-  flexDirection: "column",
-};
-
-const muted: React.CSSProperties = {
-  background: "rgba(245,158,11,0.05)",
-  border: "1px solid rgba(245,158,11,0.15)",
-  borderRadius: "8px",
-  padding: "12px",
-};
-
-const inputStyle: React.CSSProperties = {
-  background: "rgba(255,255,255,0.05)",
-  border: "1px solid rgba(245,158,11,0.25)",
-  borderRadius: "6px",
-  color: "#e2e8f0",
-  padding: "6px 10px",
-  fontSize: "13px",
-  width: "100%",
-  outline: "none",
-};
-
-function difficultyBadge(difficulty: string) {
-  const styles: Record<string, React.CSSProperties> = {
-    Beginner: { background: "rgba(16,185,129,0.15)", color: "#10b981", border: "1px solid rgba(16,185,129,0.3)" },
-    Intermediate: { background: "rgba(245,158,11,0.15)", color: "#f59e0b", border: "1px solid rgba(245,158,11,0.3)" },
-    Advanced: { background: "rgba(239,68,68,0.15)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.3)" },
-  };
-  return styles[difficulty] || styles.Intermediate;
+function DifficultyBadge({ level }: { level: string }) {
+  return (
+    <span className="px-2 py-0.5 rounded text-xs font-medium border bg-muted text-muted-foreground">
+      {level}
+    </span>
+  );
 }
+
+const panelCls = "w-72 bg-card border-r flex flex-col overflow-y-auto";
+const sectionCls = "pb-4 border-b";
+const statBoxCls = "rounded-md bg-muted/50 border p-3 space-y-2";
+const backLinkBase = "flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors mb-4";
 
 export default function OpeningsPage() {
   const [selectedOpening, setSelectedOpening] = useState<number | null>(null);
@@ -62,94 +40,78 @@ export default function OpeningsPage() {
   });
 
   const currentOpening = selectedOpening ? openingsData.find(o => o.id === selectedOpening) : null;
-  const currentVariation = selectedVariation && currentOpening ?
-    currentOpening.variations?.find(v => v.id === selectedVariation) : null;
+  const currentVariation = selectedVariation && currentOpening
+    ? currentOpening.variations?.find(v => v.id === selectedVariation)
+    : null;
 
-  const handleOpeningSelect = (openingId: number) => { setSelectedOpening(openingId); setSelectedVariation(null); };
+  const handleOpeningSelect = (id: number) => { setSelectedOpening(id); setSelectedVariation(null); };
   const handleBackToOpenings = () => { setSelectedOpening(null); setSelectedVariation(null); };
-  const handleBackToVariations = () => { setSelectedVariation(null); };
+  const handleBackToVariations = () => setSelectedVariation(null);
 
-  const backLink = (label: string, onClick: () => void) => (
-    <button onClick={onClick} className="flex items-center text-sm mb-4 transition-colors"
-      style={{ color: "rgba(245,158,11,0.7)", background: "none", border: "none", cursor: "pointer" }}
-      onMouseEnter={e => (e.currentTarget.style.color = "#f59e0b")}
-      onMouseLeave={e => (e.currentTarget.style.color = "rgba(245,158,11,0.7)")}>
-      <ChevronLeft size={18} />
-      <span className="ml-1">{label}</span>
+  const BackBtn = ({ label, onClick }: { label: string; onClick: () => void }) => (
+    <button onClick={onClick} className={backLinkBase}>
+      <ChevronLeft size={16} /><span className="ml-0.5">{label}</span>
     </button>
   );
 
+  const SideToggle = () => (
+    <div>
+      <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">Play As</h3>
+      <div className="flex gap-2">
+        {(["white", "black"] as const).map(side => (
+          <button
+            key={side}
+            onClick={() => setPlayerSide(side)}
+            className={`flex-1 py-2 rounded-md text-xs font-medium border transition-colors ${
+              playerSide === side
+                ? "bg-foreground text-background border-foreground"
+                : "bg-muted text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {side === "white" ? "White" : "Black"}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
-    <div style={darkPage}>
+    <div className="min-h-screen bg-background">
       {selectedVariation && currentVariation && currentOpening ? (
-        // Level 3 — Board View
-        <div style={darkFlex}>
-          <div style={leftPanel}>
-            <div className="p-4 space-y-4 overflow-y-auto flex-1">
-              <div style={{ borderBottom: "1px solid rgba(245,158,11,0.2)", paddingBottom: "16px" }}>
-                {backLink("Back to Variations", handleBackToVariations)}
-                <h1 className="text-lg font-bold font-cinzel mb-1" style={{ color: "#f0e6c8" }}>{currentVariation.name}</h1>
-                <p className="text-xs mb-1" style={{ color: "rgba(245,158,11,0.6)" }}>{currentOpening.name}</p>
-                <p className="text-xs" style={{ color: "rgba(226,232,240,0.55)" }}>{currentVariation.description}</p>
+        <div className="flex h-screen bg-background">
+          <div className={panelCls}>
+            <div className="p-4 space-y-4">
+              <div className={sectionCls}>
+                <BackBtn label="Back to Variations" onClick={handleBackToVariations} />
+                <h1 className="text-base font-medium text-foreground mb-0.5">{currentVariation.name}</h1>
+                <p className="text-xs text-muted-foreground mb-1">{currentOpening.name}</p>
+                <p className="text-xs text-muted-foreground">{currentVariation.description}</p>
               </div>
-
-              {/* Play As */}
-              <div style={muted}>
-                <h3 className="text-xs font-bold font-cinzel mb-2" style={{ color: "rgba(245,158,11,0.9)" }}>Play As</h3>
-                <div className="flex space-x-2">
-                  <button onClick={() => setPlayerSide("white")}
-                    style={{
-                      flex: 1, padding: "8px 4px", borderRadius: "6px", fontSize: "12px", fontWeight: 600, cursor: "pointer",
-                      background: playerSide === "white" ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.06)",
-                      color: playerSide === "white" ? "#0a0a0a" : "rgba(226,232,240,0.6)",
-                      border: playerSide === "white" ? "none" : "1px solid rgba(255,255,255,0.1)",
-                      boxShadow: playerSide === "white" ? "0 0 10px rgba(255,255,255,0.2)" : "none",
-                    }}>⚪ White</button>
-                  <button onClick={() => setPlayerSide("black")}
-                    style={{
-                      flex: 1, padding: "8px 4px", borderRadius: "6px", fontSize: "12px", fontWeight: 600, cursor: "pointer",
-                      background: playerSide === "black" ? "#1a1a2e" : "rgba(255,255,255,0.06)",
-                      color: playerSide === "black" ? "#e2e8f0" : "rgba(226,232,240,0.6)",
-                      border: playerSide === "black" ? "1px solid rgba(245,158,11,0.5)" : "1px solid rgba(255,255,255,0.1)",
-                      boxShadow: playerSide === "black" ? "0 0 10px rgba(245,158,11,0.15)" : "none",
-                    }}>⚫ Black</button>
-                </div>
+              <SideToggle />
+              <div className={statBoxCls}>
+                <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Statistics</h3>
+                {[
+                  { label: "White Win Rate", value: `${currentVariation.whiteWinRate}%` },
+                  { label: "Black Win Rate", value: `${currentVariation.blackWinRate}%` },
+                  { label: "Draw Rate",      value: `${currentVariation.drawRate}%` },
+                ].map(s => (
+                  <div key={s.label} className="flex justify-between text-xs">
+                    <span className="text-muted-foreground">{s.label}</span>
+                    <span className="font-medium text-foreground">{s.value}</span>
+                  </div>
+                ))}
               </div>
-
-              {/* Statistics */}
-              <div style={muted}>
-                <h3 className="text-xs font-bold font-cinzel mb-2" style={{ color: "rgba(245,158,11,0.9)" }}>Statistics</h3>
-                <div className="space-y-2 text-xs">
-                  <div className="flex justify-between">
-                    <span style={{ color: "rgba(226,232,240,0.6)" }}>White Win Rate:</span>
-                    <span className="font-semibold" style={{ color: "#10b981" }}>{currentVariation.whiteWinRate}%</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span style={{ color: "rgba(226,232,240,0.6)" }}>Black Win Rate:</span>
-                    <span className="font-semibold" style={{ color: "#ef4444" }}>{currentVariation.blackWinRate}%</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span style={{ color: "rgba(226,232,240,0.6)" }}>Draw Rate:</span>
-                    <span className="font-semibold" style={{ color: "rgba(245,158,11,0.8)" }}>{currentVariation.drawRate}%</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Variation Moves */}
-              <div style={muted}>
-                <h3 className="text-xs font-bold font-cinzel mb-2" style={{ color: "rgba(245,158,11,0.9)" }}>Variation Moves</h3>
-                <div className="text-xs leading-relaxed" style={{ color: "rgba(226,232,240,0.7)" }}>
-                  {currentVariation.moves.map((move, index) => (
-                    <span key={index} className="mr-1">
-                      {Math.floor(index / 2) + 1}{index % 2 === 0 ? "." : "..."} {move}
-                    </span>
+              <div className={statBoxCls}>
+                <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Moves</h3>
+                <div className="text-xs text-foreground leading-relaxed">
+                  {currentVariation.moves.map((move, i) => (
+                    <span key={i} className="mr-1">{Math.floor(i / 2) + 1}{i % 2 === 0 ? "." : "..."} {move}</span>
                   ))}
                 </div>
               </div>
             </div>
           </div>
-
-          <div className="flex-1 flex items-center justify-center">
+          <div className="flex-1 flex items-center justify-center p-8">
             <OpeningBoard
               openingLine={{
                 id: currentVariation.id,
@@ -160,7 +122,8 @@ export default function OpeningsPage() {
                 blackWinRate: currentVariation.blackWinRate,
                 drawRate: currentVariation.drawRate,
                 description: currentVariation.description,
-                difficulty: currentOpening.difficulty
+                difficulty: currentOpening.difficulty,
+                lesson: currentVariation.lesson ?? currentOpening.lesson,
               }}
               playerSide={playerSide}
             />
@@ -168,193 +131,127 @@ export default function OpeningsPage() {
         </div>
 
       ) : selectedOpening && currentOpening ? (
-        // Level 2 — Variations Grid
-        <div className="py-12 px-4 sm:px-6 lg:px-8">
+        <div className="py-10 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             <div className="mb-8">
-              {backLink("Back to Openings", handleBackToOpenings)}
-              <h1 className="text-3xl font-bold font-cinzel mb-2" style={{ color: "#f0e6c8" }}>
-                {currentOpening.name} <span style={{ color: "#f59e0b" }}>Variations</span>
-              </h1>
-              <p className="text-sm mb-4" style={{ color: "rgba(226,232,240,0.6)" }}>{currentOpening.description}</p>
+              <BackBtn label="Back to Openings" onClick={handleBackToOpenings} />
+              <h1 className="text-2xl font-medium text-foreground tracking-tight mb-1">{currentOpening.name}</h1>
+              <p className="text-sm text-muted-foreground mb-4">{currentOpening.description}</p>
               <div className="flex flex-wrap gap-2 text-xs">
-                <span className="px-3 py-1 rounded-full font-semibold"
-                  style={{ background: "rgba(16,185,129,0.15)", color: "#10b981", border: "1px solid rgba(16,185,129,0.3)" }}>
-                  White: {currentOpening.whiteWinRate}%
-                </span>
-                <span className="px-3 py-1 rounded-full font-semibold"
-                  style={{ background: "rgba(239,68,68,0.15)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.3)" }}>
-                  Black: {currentOpening.blackWinRate}%
-                </span>
-                <span className="px-3 py-1 rounded-full font-semibold"
-                  style={{ background: "rgba(6,182,212,0.15)", color: "#06b6d4", border: "1px solid rgba(6,182,212,0.3)" }}>
-                  Popularity: {currentOpening.popularity}%
-                </span>
+                {[
+                  `White: ${currentOpening.whiteWinRate}%`,
+                  `Black: ${currentOpening.blackWinRate}%`,
+                  `Popularity: ${currentOpening.popularity}%`,
+                ].map(label => (
+                  <span key={label} className="px-2.5 py-1 rounded-full font-medium border bg-muted text-muted-foreground">{label}</span>
+                ))}
               </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {(currentOpening.variations || []).map((variation) => (
-                <div key={variation.id} onClick={() => setSelectedVariation(variation.id)}
-                  className="rounded-xl cursor-pointer overflow-hidden transition-all duration-200"
-                  style={{ background: "linear-gradient(180deg, #0f1629 0%, #111d3a 100%)", border: "1px solid rgba(245,158,11,0.2)" }}
-                  onMouseEnter={e => {
-                    (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(245,158,11,0.6)";
-                    (e.currentTarget as HTMLDivElement).style.transform = "translateY(-2px)";
-                    (e.currentTarget as HTMLDivElement).style.boxShadow = "0 8px 25px rgba(245,158,11,0.15)";
-                  }}
-                  onMouseLeave={e => {
-                    (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(245,158,11,0.2)";
-                    (e.currentTarget as HTMLDivElement).style.transform = "none";
-                    (e.currentTarget as HTMLDivElement).style.boxShadow = "none";
-                  }}>
-                  <div style={{ background: "#080d18", padding: "12px" }}>
+                <div key={variation.id} onClick={() => setSelectedVariation(variation.id)} className="card cursor-pointer overflow-hidden">
+                  <div className="bg-muted/50 p-3 border-b">
                     <ChessBoardPreview fen={variation.fen} />
                   </div>
                   <div className="p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-sm font-bold font-cinzel" style={{ color: "#f0e6c8" }}>{variation.name}</h3>
-                      <BookOpen size={14} style={{ color: "#f59e0b" }} />
+                    <div className="flex items-center justify-between mb-1.5">
+                      <h3 className="text-sm font-medium text-foreground">{variation.name}</h3>
+                      <BookOpen size={13} className="text-muted-foreground" />
                     </div>
-                    <p className="text-xs mb-3" style={{ color: "rgba(226,232,240,0.55)" }}>{variation.description}</p>
+                    <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{variation.description}</p>
                     <div className="space-y-1 text-xs">
-                      <div className="flex justify-between">
-                        <span style={{ color: "rgba(226,232,240,0.55)" }}>White Win:</span>
-                        <span className="font-semibold flex items-center gap-1" style={{ color: "#10b981" }}>
-                          <TrendingUp size={11} />{variation.whiteWinRate}%
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span style={{ color: "rgba(226,232,240,0.55)" }}>Black Win:</span>
-                        <span className="font-semibold flex items-center gap-1" style={{ color: "#ef4444" }}>
-                          <TrendingUp size={11} />{variation.blackWinRate}%
-                        </span>
-                      </div>
+                      {[["White Win", `${variation.whiteWinRate}%`], ["Black Win", `${variation.blackWinRate}%`]].map(([l, v]) => (
+                        <div key={l} className="flex justify-between">
+                          <span className="text-muted-foreground">{l}</span>
+                          <span className="font-medium flex items-center gap-1 text-foreground"><TrendingUp size={10} />{v}</span>
+                        </div>
+                      ))}
                     </div>
-                    <div className="mt-3 pt-3 text-xs" style={{ borderTop: "1px solid rgba(245,158,11,0.1)", color: "rgba(245,158,11,0.55)" }}>
-                      <strong>Key Moves:</strong> {variation.moves.slice(-3).join(", ")}
+                    <div className="mt-3 pt-3 text-xs text-muted-foreground border-t">
+                      <strong className="text-foreground">Key Moves:</strong> {variation.moves.slice(-3).join(", ")}
                     </div>
                   </div>
                 </div>
               ))}
             </div>
-
             {(currentOpening.variations || []).length === 0 && (
               <div className="text-center py-12">
-                <div className="text-5xl mb-4">📚</div>
-                <h3 className="text-lg font-cinzel font-semibold mb-2" style={{ color: "#f0e6c8" }}>No variations available</h3>
-                <p style={{ color: "rgba(245,158,11,0.5)" }}>Variations for this opening will be added soon.</p>
+                <h3 className="text-base font-medium text-foreground mb-1">No variations available</h3>
+                <p className="text-sm text-muted-foreground">Variations for this opening will be added soon.</p>
               </div>
             )}
           </div>
         </div>
 
       ) : (
-        // Level 1 — Openings Grid
-        <div className="py-12 px-4 sm:px-6 lg:px-8">
+        <div className="py-10 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-start justify-between mb-8">
               <div>
-                <Link href="/" className="flex items-center text-sm mb-4 transition-colors"
-                  style={{ color: "rgba(245,158,11,0.7)" }}
-                  onMouseEnter={e => (e.currentTarget.style.color = "#f59e0b")}
-                  onMouseLeave={e => (e.currentTarget.style.color = "rgba(245,158,11,0.7)")}>
-                  <ChevronLeft size={18} />
-                  <span className="ml-1">Back to Home</span>
-                </Link>
-                <h1 className="text-3xl font-bold font-cinzel" style={{ color: "#f0e6c8" }}>
-                  Chess <span style={{ color: "#f59e0b" }}>Openings</span>
-                </h1>
-                <p className="text-sm mt-2" style={{ color: "rgba(226,232,240,0.55)" }}>Learn and practice popular chess openings</p>
+                <Link href="/" className={backLinkBase}><ChevronLeft size={16} /><span className="ml-0.5">Home</span></Link>
+                <h1 className="text-2xl font-medium text-foreground tracking-tight">Chess Openings</h1>
+                <p className="text-sm text-muted-foreground mt-1">Learn and practice popular chess openings</p>
               </div>
-              <button onClick={() => setShowFilters(!showFilters)}
-                className="flex items-center px-4 py-2 rounded-lg text-sm font-semibold transition-all"
-                style={{
-                  background: showFilters ? "rgba(245,158,11,0.2)" : "rgba(245,158,11,0.1)",
-                  border: "1px solid rgba(245,158,11,0.4)",
-                  color: "#f59e0b",
-                }}>
-                <Filter size={14} />
-                <span className="ml-2">Filters</span>
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium border transition-colors ${
+                  showFilters
+                    ? "bg-foreground text-background border-foreground"
+                    : "bg-card text-foreground hover:bg-muted"
+                }`}
+              >
+                <Filter size={14} />Filters
               </button>
             </div>
 
             {showFilters && (
-              <div className="mb-8 p-4 rounded-xl" style={{ background: "rgba(245,158,11,0.04)", border: "1px solid rgba(245,158,11,0.2)" }}>
+              <div className="mb-8 p-4 rounded-lg bg-card border">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold mb-2" style={{ color: "rgba(245,158,11,0.8)" }}>Side</label>
-                    <select value={filters.side} onChange={e => setFilters(prev => ({ ...prev, side: e.target.value }))} style={inputStyle}>
-                      <option value="All" style={{ background: "#0f1629" }}>All Sides</option>
-                      <option value="White" style={{ background: "#0f1629" }}>White Advantage</option>
-                      <option value="Black" style={{ background: "#0f1629" }}>Black Advantage</option>
+                    <label className="block text-xs font-medium text-muted-foreground mb-1.5">Side</label>
+                    <select value={filters.side} onChange={e => setFilters(p => ({ ...p, side: e.target.value }))} className="input-base">
+                      <option value="All">All Sides</option><option value="White">White Advantage</option><option value="Black">Black Advantage</option>
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold mb-2" style={{ color: "rgba(245,158,11,0.8)" }}>Difficulty</label>
-                    <select value={filters.difficulty} onChange={e => setFilters(prev => ({ ...prev, difficulty: e.target.value }))} style={inputStyle}>
-                      <option value="All" style={{ background: "#0f1629" }}>All Difficulties</option>
-                      <option value="Beginner" style={{ background: "#0f1629" }}>Beginner</option>
-                      <option value="Intermediate" style={{ background: "#0f1629" }}>Intermediate</option>
-                      <option value="Advanced" style={{ background: "#0f1629" }}>Advanced</option>
+                    <label className="block text-xs font-medium text-muted-foreground mb-1.5">Difficulty</label>
+                    <select value={filters.difficulty} onChange={e => setFilters(p => ({ ...p, difficulty: e.target.value }))} className="input-base">
+                      <option value="All">All Difficulties</option><option value="Beginner">Beginner</option><option value="Intermediate">Intermediate</option><option value="Advanced">Advanced</option>
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold mb-2" style={{ color: "rgba(245,158,11,0.8)" }}>Min Win Rate (%)</label>
-                    <input type="number" min="0" max="100" value={filters.minWinRate}
-                      onChange={e => setFilters(prev => ({ ...prev, minWinRate: parseInt(e.target.value) || 0 }))}
-                      style={inputStyle} />
+                    <label className="block text-xs font-medium text-muted-foreground mb-1.5">Min Win Rate (%)</label>
+                    <input type="number" min="0" max="100" value={filters.minWinRate} onChange={e => setFilters(p => ({ ...p, minWinRate: parseInt(e.target.value) || 0 }))} className="input-base" />
                   </div>
                 </div>
               </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {filteredOpenings.map((opening) => (
-                <div key={opening.id} onClick={() => handleOpeningSelect(opening.id)}
-                  className="rounded-xl cursor-pointer overflow-hidden transition-all duration-200"
-                  style={{ background: "linear-gradient(180deg, #0f1629 0%, #111d3a 100%)", border: "1px solid rgba(245,158,11,0.2)" }}
-                  onMouseEnter={e => {
-                    (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(245,158,11,0.6)";
-                    (e.currentTarget as HTMLDivElement).style.transform = "translateY(-2px)";
-                    (e.currentTarget as HTMLDivElement).style.boxShadow = "0 8px 25px rgba(245,158,11,0.15)";
-                  }}
-                  onMouseLeave={e => {
-                    (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(245,158,11,0.2)";
-                    (e.currentTarget as HTMLDivElement).style.transform = "none";
-                    (e.currentTarget as HTMLDivElement).style.boxShadow = "none";
-                  }}>
-                  <div style={{ background: "#080d18", padding: "12px" }}>
+                <div key={opening.id} onClick={() => handleOpeningSelect(opening.id)} className="card cursor-pointer overflow-hidden">
+                  <div className="bg-muted/50 p-3 border-b">
                     <ChessBoardPreview fen={opening.fen} />
                   </div>
                   <div className="p-4">
-                    <h3 className="text-sm font-bold font-cinzel mb-2" style={{ color: "#f0e6c8" }}>{opening.name}</h3>
+                    <h3 className="text-sm font-medium text-foreground mb-2">{opening.name}</h3>
                     <div className="flex flex-wrap gap-1 mb-3">
-                      <span className="px-2 py-0.5 rounded text-xs font-semibold" style={difficultyBadge(opening.difficulty)}>
-                        {opening.difficulty}
-                      </span>
-                      <span className="px-2 py-0.5 rounded text-xs font-semibold"
-                        style={{ background: "rgba(6,182,212,0.12)", color: "#06b6d4", border: "1px solid rgba(6,182,212,0.25)" }}>
+                      <DifficultyBadge level={opening.difficulty} />
+                      <span className="px-2 py-0.5 rounded text-xs font-medium bg-muted text-muted-foreground border">
                         {opening.variations?.length || 0} vars
                       </span>
                     </div>
-                    <p className="text-xs mb-3 line-clamp-2" style={{ color: "rgba(226,232,240,0.55)" }}>{opening.description}</p>
+                    <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{opening.description}</p>
                     <div className="space-y-1 text-xs">
-                      <div className="flex justify-between">
-                        <span style={{ color: "rgba(226,232,240,0.55)" }}>White Win:</span>
-                        <span className="font-semibold" style={{ color: "#10b981" }}>{opening.whiteWinRate}%</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span style={{ color: "rgba(226,232,240,0.55)" }}>Black Win:</span>
-                        <span className="font-semibold" style={{ color: "#ef4444" }}>{opening.blackWinRate}%</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span style={{ color: "rgba(226,232,240,0.55)" }}>Popularity:</span>
-                        <span className="font-semibold" style={{ color: "#06b6d4" }}>{opening.popularity}%</span>
-                      </div>
+                      {[["White Win", `${opening.whiteWinRate}%`], ["Black Win", `${opening.blackWinRate}%`], ["Popularity", `${opening.popularity}%`]].map(([l, v]) => (
+                        <div key={l} className="flex justify-between">
+                          <span className="text-muted-foreground">{l}</span>
+                          <span className="font-medium text-foreground">{v}</span>
+                        </div>
+                      ))}
                     </div>
-                    <div className="mt-3 pt-3 text-xs" style={{ borderTop: "1px solid rgba(245,158,11,0.1)", color: "rgba(245,158,11,0.55)" }}>
-                      <strong>Moves:</strong> {opening.moves.slice(0, 3).join(", ")}{opening.moves.length > 3 && "..."}
+                    <div className="mt-3 pt-3 text-xs text-muted-foreground border-t">
+                      <strong className="text-foreground">Moves:</strong> {opening.moves.slice(0, 3).join(", ")}{opening.moves.length > 3 && "..."}
                     </div>
                   </div>
                 </div>
@@ -363,9 +260,8 @@ export default function OpeningsPage() {
 
             {filteredOpenings.length === 0 && (
               <div className="text-center py-16">
-                <div className="text-5xl mb-4">🔍</div>
-                <h3 className="text-xl font-cinzel font-semibold mb-2" style={{ color: "#f0e6c8" }}>No openings found</h3>
-                <p style={{ color: "rgba(245,158,11,0.5)" }}>Try adjusting your filters to see more results.</p>
+                <h3 className="text-base font-medium text-foreground mb-1">No openings found</h3>
+                <p className="text-sm text-muted-foreground">Try adjusting your filters to see more results.</p>
               </div>
             )}
           </div>

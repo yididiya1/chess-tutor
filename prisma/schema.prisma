@@ -113,6 +113,7 @@ model UserStats {
   currentStreak         Int      @default(0)
   bestStreak            Int      @default(0)
   averageRating         Float    @default(0)
+  puzzleRating          Int      @default(1200)
   totalTimeSpent        Int      @default(0) // in seconds
   lastActiveDate        DateTime @default(now())
   createdAt             DateTime @default(now())

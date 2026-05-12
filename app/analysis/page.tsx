@@ -4,17 +4,17 @@ import AnalysisBoard from "../components/AnalysisBoard";
 
 export default function AnalysisPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-card border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <Link href="/" className="flex items-center text-gray-600 hover:text-gray-900 mr-6">
+              <Link href="/" className="flex items-center text-muted-foreground hover:text-foreground mr-6 transition-colors">
                 <ChevronLeft size={20} />
                 <span className="ml-1">Back to Home</span>
               </Link>
-              <h1 className="text-2xl font-bold text-gray-900">Chess Analysis Board</h1>
+              <h1 className="text-2xl font-medium text-foreground tracking-tight">Chess Analysis Board</h1>
             </div>
           </div>
         </div>

@@ -9,11 +9,11 @@ export default function UserWelcome() {
   if (!session) {
     return (
       <div className="text-center mb-12">
-        <div className="w-20 h-20 bg-gray-600 rounded-full mx-auto mb-4 flex items-center justify-center">
-          <span className="text-2xl text-gray-300">?</span>
+        <div className="w-20 h-20 bg-muted border rounded-full mx-auto mb-4 flex items-center justify-center">
+          <span className="text-2xl text-muted-foreground">?</span>
         </div>
-        <h1 className="text-3xl text-white font-bold mb-2">Welcome to Chess Tutor</h1>
-        <p className="text-lg text-gray-300">Please sign in to track your progress</p>
+        <h1 className="text-3xl text-foreground font-medium mb-2 tracking-tight">Welcome to Chess Tutor</h1>
+        <p className="text-lg text-muted-foreground">Please sign in to track your progress</p>
       </div>
     )
   }
@@ -22,31 +22,30 @@ export default function UserWelcome() {
   const userImage = session.user?.image
 
   return (
-    <div className="text-center mb-12 flex justify-start space-x-6">
-      <div className="w-20 h-20  mb-4 relative">
+    <div className="mb-12 flex justify-start space-x-6">
+      <div className="w-20 h-20 mb-4 relative">
         {userImage ? (
           <Image
             src={userImage || '/images/deafult.png'}
             alt="User avatar"
             width={80}
             height={80}
-            className="rounded-full border-2 border-blue-400"
+            className="rounded-full border"
           />
         ) : (
-          <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-            <span className="text-2xl font-bold text-white">
+          <div className="w-20 h-20 bg-muted border rounded-full flex items-center justify-center">
+            <span className="text-2xl font-medium text-foreground">
               {userName.charAt(0).toUpperCase()}
             </span>
           </div>
         )}
       </div>
       <div className="flex flex-col justify-start items-start">
-      <h1 className="text-3xl text-white font-bold mb-2">
-        Welcome back, {userName}!
-      </h1>
-      <p className="text-lg text-gray-300">Ready to improve your chess skills?</p>
+        <h1 className="text-3xl text-foreground font-medium mb-2 tracking-tight">
+          Welcome back, {userName}!
+        </h1>
+        <p className="text-lg text-muted-foreground">Ready to improve your chess skills?</p>
       </div>
-      
     </div>
   )
-} 
+}

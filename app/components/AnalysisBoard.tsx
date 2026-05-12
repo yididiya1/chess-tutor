@@ -482,11 +482,11 @@ export default function AnalysisBoard() {
   const getGameStatusMessage = () => {
     switch (gameStatus) {
       case 'checkmate':
-        return `🎉 Checkmate! ${winner === 'white' ? 'White' : 'Black'} wins!`;
+        return `Checkmate — ${winner === 'white' ? 'White' : 'Black'} wins.`;
       case 'stalemate':
-        return "🤝 Stalemate! The game is a draw.";
+        return "Stalemate. The game is a draw.";
       case 'draw':
-        return "🤝 Draw! The game ended in a draw.";
+        return "Draw. The game ended in a draw.";
       default:
         return null;
     }
@@ -496,33 +496,31 @@ export default function AnalysisBoard() {
     <div className="w-full max-w-7xl mx-auto p-6">
       {/* Side Selection */}
       <div className="mb-6 flex justify-center">
-        <div className="rounded-xl p-4" style={{ background: 'linear-gradient(135deg,#0a0f1e,#0d1426)', border: '1px solid rgba(245,158,11,0.18)' }}>
-          <h3 className="text-sm font-cinzel font-semibold uppercase tracking-widest mb-3 text-center" style={{ color: 'rgba(245,158,11,0.7)' }}>Choose Your Side</h3>
+        <div className="panel p-4">
+          <h3 className="text-sm font-medium uppercase tracking-wider mb-3 text-center text-muted-foreground">Choose Your Side</h3>
           <div className="flex gap-3">
             {(['white','black'] as const).map(side => (
               <button
                 key={side}
                 onClick={() => setUserSide(side)}
-                className="flex-1 px-4 py-2.5 rounded-lg text-sm font-cinzel font-semibold transition-all duration-200"
-                style={{
-                  background: userSide === side ? (side === 'white' ? 'rgba(240,230,200,0.15)' : 'rgba(30,30,50,0.8)') : 'rgba(255,255,255,0.04)',
-                  border: `1px solid ${userSide === side ? 'rgba(245,158,11,0.55)' : 'rgba(245,158,11,0.15)'}`,
-                  color: userSide === side ? '#f0e6c8' : 'rgba(226,232,240,0.4)',
-                  boxShadow: userSide === side ? '0 0 10px rgba(245,158,11,0.15)' : 'none',
-                }}
+                className={`flex-1 px-4 py-2.5 rounded-md text-sm font-medium transition-colors border ${
+                  userSide === side
+                    ? 'bg-foreground text-background border-foreground'
+                    : 'bg-muted text-muted-foreground hover:text-foreground'
+                }`}
               >
-                {side === 'white' ? '⚪ White' : '⚫ Black'}
+                {side === 'white' ? 'White' : 'Black'}
               </button>
             ))}
           </div>
-          <p className="text-xs font-rajdhani mt-2 text-center" style={{ color: 'rgba(226,232,240,0.3)' }}>Evaluations shown from your perspective</p>
+          <p className="text-xs mt-2 text-center text-muted-foreground">Evaluations shown from your perspective</p>
         </div>
       </div>
 
       {gameStatus !== 'playing' && (
-        <div className="mb-6 p-4 rounded-xl text-center" style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.3)' }}>
-          <div className="text-xl font-bold font-cinzel mb-1" style={{ color: '#10b981' }}>{getGameStatusMessage()}</div>
-          <div className="text-xs font-rajdhani" style={{ color: 'rgba(226,232,240,0.45)' }}>The game has ended. Analysis continues for educational purposes.</div>
+        <div className="mb-6 p-4 rounded-lg text-center bg-muted border">
+          <div className="text-lg font-medium mb-1 text-foreground">{getGameStatusMessage()}</div>
+          <div className="text-xs text-muted-foreground">The game has ended. Analysis continues for educational purposes.</div>
         </div>
       )}
 
@@ -537,31 +535,22 @@ export default function AnalysisBoard() {
           <div className="mb-4 flex gap-2">
             <button
               onClick={resetBoard}
-              className="px-4 py-2 rounded-lg text-xs font-cinzel font-semibold uppercase tracking-wider transition-all duration-200"
-              style={{ background: 'rgba(6,182,212,0.1)', border: '1px solid rgba(6,182,212,0.35)', color: '#06b6d4' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(6,182,212,0.2)'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(6,182,212,0.1)'; }}
+              className="btn-outline text-xs"
             >
-              ↺ Reset
+              Reset
             </button>
             <button
               onClick={undoMove}
               disabled={moveHistory.length === 0}
-              className="px-4 py-2 rounded-lg text-xs font-cinzel font-semibold uppercase tracking-wider transition-all duration-200 disabled:cursor-not-allowed"
-              style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.25)', color: moveHistory.length === 0 ? 'rgba(245,158,11,0.25)' : '#f59e0b' }}
+              className="btn-outline text-xs disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              ← Undo
+              Undo
             </button>
           </div>
-          
+
           <div
             ref={boardContainerRef}
-            className="rounded-xl overflow-hidden p-3 w-full"
-            style={{
-              background: '#0a0f1c',
-              border: '1px solid rgba(245,158,11,0.2)',
-              boxShadow: '0 0 40px rgba(245,158,11,0.06)',
-            }}
+            className="rounded-lg overflow-hidden p-3 w-full bg-card border"
           >
             <Chessboard
               id="AnalysisBoard"
@@ -574,25 +563,25 @@ export default function AnalysisBoard() {
               }}
               boardOrientation={userSide}
               arePiecesDraggable={gameStatus === 'playing'}
-              customDarkSquareStyle={{ backgroundColor: "#2d4a22" }}
-              customLightSquareStyle={{ backgroundColor: "#8fb36a" }}
+              customDarkSquareStyle={{ backgroundColor: "#8b8170" }}
+              customLightSquareStyle={{ backgroundColor: "#ede9dd" }}
             />
           </div>
 
           {/* Current Turn Indicator */}
           {gameStatus === 'playing' && (
-            <div className="mt-4 px-4 py-2 rounded-lg" style={{ background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.15)' }}>
-              <div className="text-center text-sm font-rajdhani font-semibold" style={{ color: '#f0e6c8' }}>
-                {game.turn() === 'w' ? '⚪ White' : '⚫ Black'} to move
-                {game.inCheck() && <span className="ml-2" style={{ color: '#ef4444' }}>👑 CHECK!</span>}
+            <div className="mt-4 px-4 py-2 rounded-md bg-muted border">
+              <div className="text-center text-sm font-medium text-foreground">
+                {game.turn() === 'w' ? 'White' : 'Black'} to move
+                {game.inCheck() && <span className="ml-2 text-destructive">— Check</span>}
               </div>
             </div>
           )}
 
           {moveHistory.length > 0 && (
-            <div className="mt-4 p-3 rounded-lg max-w-lg w-full" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(245,158,11,0.12)' }}>
-              <h4 className="text-xs font-cinzel font-semibold uppercase tracking-widest mb-2" style={{ color: 'rgba(245,158,11,0.6)' }}>Move History</h4>
-              <div className="text-xs font-mono max-h-28 overflow-y-auto" style={{ color: 'rgba(226,232,240,0.5)' }}>
+            <div className="mt-4 p-3 rounded-md max-w-lg w-full bg-muted/50 border">
+              <h4 className="text-xs font-medium uppercase tracking-wider mb-2 text-muted-foreground">Move History</h4>
+              <div className="text-xs font-mono max-h-28 overflow-y-auto text-muted-foreground">
                 {moveHistory.map((move, index) => (
                   <span key={index} className="mr-2">
                     {Math.floor(index / 2) + 1}{index % 2 === 0 ? '.' : '…'} {move}
@@ -605,7 +594,7 @@ export default function AnalysisBoard() {
 
         {/* Right side - Move Analysis */}
         <div className="flex-[1] min-w-0">
-          <MoveAnalysis 
+          <MoveAnalysis
             analysisLines={analysisLines}
             isAnalyzing={isAnalyzing}
           />
@@ -613,17 +602,17 @@ export default function AnalysisBoard() {
       </div>
 
       {/* Engine Status */}
-      <div className="mt-6 text-center text-sm text-gray-600">
+      <div className="mt-6 text-center text-sm text-muted-foreground">
         Engine Status: {engineReady ? (
-          <span className="text-green-600 font-semibold">Engine Ready ✓</span>
+          <span className="text-success font-medium">Ready</span>
         ) : (
-          <span className="text-yellow-600 font-semibold">Initializing...</span>
+          <span className="text-foreground font-medium">Initializing…</span>
         )}
         <div className="text-xs mt-1">
-          Current Evaluation (from {userSide}&apos;s perspective): {evaluation > 0 ? `+${(evaluation/100).toFixed(1)}` : (evaluation/100).toFixed(1)} 
+          Current Evaluation (from {userSide}&apos;s perspective): {evaluation > 0 ? `+${(evaluation/100).toFixed(1)}` : (evaluation/100).toFixed(1)}
           {Math.abs(evaluation) >= 9999 ? ' (Mate)' : ' pawns'}
         </div>
       </div>
     </div>
   );
-} 
+}

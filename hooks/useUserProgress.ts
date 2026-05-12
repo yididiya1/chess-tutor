@@ -6,6 +6,27 @@ interface PuzzleProgressData {
   puzzleId: string
   solved: boolean
   timeSpent?: number
+  mistakes?: number
+  puzzleRating?: number
+}
+
+export interface PuzzleRatingOutcome {
+  previous: number
+  new: number
+  delta: number
+  speedBonus: number
+}
+
+export interface PuzzleStreakOutcome {
+  current: number
+  best: number
+  broken: boolean
+}
+
+export interface PuzzleProgressResult {
+  success: boolean
+  rating: PuzzleRatingOutcome | null
+  streak: PuzzleStreakOutcome | null
 }
 
 interface OpeningProgressData {
@@ -17,29 +38,30 @@ interface OpeningProgressData {
 export function useUserProgress() {
   const [isLoading, setIsLoading] = useState(false)
 
-  const updatePuzzleProgress = useCallback(async (data: PuzzleProgressData) => {
-    setIsLoading(true)
-    try {
-      const response = await fetch('/api/puzzles/progress', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
-      
-      if (!response.ok) {
-        throw new Error('Failed to update puzzle progress')
+  const updatePuzzleProgress = useCallback(
+    async (data: PuzzleProgressData): Promise<PuzzleProgressResult> => {
+      setIsLoading(true)
+      try {
+        const response = await fetch('/api/puzzles/progress', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        })
+
+        if (!response.ok) {
+          throw new Error('Failed to update puzzle progress')
+        }
+
+        return (await response.json()) as PuzzleProgressResult
+      } catch (error) {
+        console.error('Error updating puzzle progress:', error)
+        throw error
+      } finally {
+        setIsLoading(false)
       }
-      
-      return await response.json()
-    } catch (error) {
-      console.error('Error updating puzzle progress:', error)
-      throw error
-    } finally {
-      setIsLoading(false)
-    }
-  }, [])
+    },
+    []
+  )
 
   const updateOpeningProgress = useCallback(async (data: OpeningProgressData) => {
     setIsLoading(true)

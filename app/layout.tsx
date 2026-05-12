@@ -1,21 +1,13 @@
 import type { Metadata } from "next";
-import { Cinzel, Rajdhani } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import SessionProvider from "./components/SessionProvider";
 import Navbar from "./components/Navbar";
 
-const cinzel = Cinzel({
-  variable: "--font-cinzel",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
-  display: "swap",
-});
-
-const rajdhani = Rajdhani({
-  variable: "--font-rajdhani",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -31,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${cinzel.variable} ${rajdhani.variable} antialiased`}>
+      <body className={`${inter.variable} antialiased`}>
         <SessionProvider>
           <ThemeProvider>
             <Navbar />

@@ -10,6 +10,24 @@
     "popularity": 85,
     "difficulty": "Beginner",
     "description": "A classical opening focusing on rapid development and central control.",
+    "lesson": {
+      "intro": [
+        "The Italian Game is one of the oldest openings in chess — players have used it for over 500 years.",
+        "Its core idea is simple: develop pieces quickly, control the center, and aim at f7 — Black's weakest square."
+      ],
+      "perMove": [
+        { "side": "white", "messages": ["1. e4 — the King's Pawn opens our game.", "This stakes a claim in the center and frees both the bishop and the queen."] },
+        { "side": "black", "messages": ["1...e5 — Black mirrors, contesting the center directly."] },
+        { "side": "white", "messages": ["2. Nf3 — we develop a knight and attack the e5 pawn at the same time.", "Notice how each move accomplishes multiple goals: development plus pressure."] },
+        { "side": "black", "messages": ["2...Nc6 — Black defends e5 with a natural developing move."] },
+        { "side": "white", "messages": ["3. Bc4 — the Italian bishop takes aim.", "This bishop points right at f7, the only square defended solely by Black's king."] }
+      ],
+      "outro": [
+        "We've reached the starting position of the Italian Game.",
+        "From here, Black has several solid replies — the Giuoco Piano, the Two Knights, or the Hungarian Defense.",
+        "Pick a variation to see how Black responds and how the game develops."
+      ]
+    },
     "variations": [
       {
         "id": 11,
@@ -19,7 +37,26 @@
         "whiteWinRate": 53.1,
         "blackWinRate": 30.8,
         "drawRate": 16.1,
-        "description": "The quiet game - a solid positional approach to the Italian Game."
+        "description": "The quiet game - a solid positional approach to the Italian Game.",
+        "lesson": {
+          "intro": [
+            "The Giuoco Piano — Italian for 'quiet game' — is the classical answer to the Italian.",
+            "Black mirrors White's setup, leading to slow, positional play."
+          ],
+          "perMove": [
+            { "side": "white", "messages": ["1. e4 stakes our claim in the center."] },
+            { "side": "black", "messages": ["1...e5 — Black mirrors."] },
+            { "side": "white", "messages": ["2. Nf3 develops with tempo, attacking e5."] },
+            { "side": "black", "messages": ["2...Nc6 defends e5 and develops."] },
+            { "side": "white", "messages": ["3. Bc4 — the Italian bishop, eyeing f7."] },
+            { "side": "black", "messages": ["3...Bc5 — Black mirrors with the bishop, also targeting f2.", "Both sides have symmetrical pressure on the weakest squares — the 'quiet game' is set."] }
+          ],
+          "outro": [
+            "The Giuoco Piano is famous for slow, manoeuvring play.",
+            "White typically plays c3 and d3 to support a later d4 break.",
+            "Despite its quiet name, both sides have rich strategic and tactical possibilities."
+          ]
+        }
       },
       {
         "id": 12,
@@ -29,7 +66,26 @@
         "whiteWinRate": 51.8,
         "blackWinRate": 32.1,
         "drawRate": 16.1,
-        "description": "Sharp tactical play with early knight development."
+        "description": "Sharp tactical play with early knight development.",
+        "lesson": {
+          "intro": [
+            "The Two Knights Defense is the sharp, aggressive reply to the Italian Game.",
+            "Black ignores the bishop on c4 and develops a second knight with a threat of its own."
+          ],
+          "perMove": [
+            { "side": "white", "messages": ["1. e4 opens the game."] },
+            { "side": "black", "messages": ["1...e5 — symmetrical response."] },
+            { "side": "white", "messages": ["2. Nf3 attacks e5 and develops."] },
+            { "side": "black", "messages": ["2...Nc6 defends with a developing move."] },
+            { "side": "white", "messages": ["3. Bc4 — the Italian bishop is in place."] },
+            { "side": "black", "messages": ["3...Nf6 — Black develops the second knight and attacks White's e4 pawn.", "This signals an intent to fight: tactics are coming."] }
+          ],
+          "outro": [
+            "The Two Knights leads to some of the sharpest play in classical openings.",
+            "White's most ambitious choice now is 4. Ng5, attacking f7 directly.",
+            "Be ready for tactics — this variation has trapped many players over the centuries."
+          ]
+        }
       },
       {
         "id": 13,
@@ -39,7 +95,26 @@
         "whiteWinRate": 54.2,
         "blackWinRate": 29.3,
         "drawRate": 16.5,
-        "description": "A solid but passive defense for Black."
+        "description": "A solid but passive defense for Black.",
+        "lesson": {
+          "intro": [
+            "The Hungarian Defense is the solid but modest reply to the Italian Game.",
+            "Black avoids tactical complications and aims for a safe, passive setup."
+          ],
+          "perMove": [
+            { "side": "white", "messages": ["1. e4 — the King's Pawn opening."] },
+            { "side": "black", "messages": ["1...e5 — mirroring White's central thrust."] },
+            { "side": "white", "messages": ["2. Nf3 develops and attacks e5."] },
+            { "side": "black", "messages": ["2...Nc6 defends and develops."] },
+            { "side": "white", "messages": ["3. Bc4 takes aim at f7."] },
+            { "side": "black", "messages": ["3...Be7 — Black quietly tucks the bishop away.", "This avoids the sharper Giuoco Piano and the tactical Two Knights, at the cost of activity."] }
+          ],
+          "outro": [
+            "The Hungarian Defense is rare at the top level — Black gives up activity for safety.",
+            "White typically gets a small but stable edge with patient play.",
+            "Useful to know defensively, even if you rarely play it."
+          ]
+        }
       }
     ]
   },
@@ -54,6 +129,22 @@
     "popularity": 92,
     "difficulty": "Intermediate",
     "description": "A strategic opening offering a pawn to gain central control.",
+    "lesson": {
+      "intro": [
+        "The Queen's Gambit is one of the most respected openings at every level — from beginner to world champion.",
+        "It's not really a gambit: White offers the c-pawn but can usually win it back. The real goal is to undermine Black's center."
+      ],
+      "perMove": [
+        { "side": "white", "messages": ["1. d4 — the Queen's Pawn.", "Solid, strategic, and a favorite of positional players."] },
+        { "side": "black", "messages": ["1...d5 — Black contests the center directly, just as e5 does against e4."] },
+        { "side": "white", "messages": ["2. c4 — the actual gambit move.", "It pressures d5 and offers the c-pawn. If Black takes, White's d4 will dominate the center."] }
+      ],
+      "outro": [
+        "Black now chooses how to handle the offer.",
+        "Take the pawn (Accepted), defend with e6 (Declined), or support d5 with c6 (Slav).",
+        "Each leads to a completely different middlegame."
+      ]
+    },
     "variations": [
       {
         "id": 21,
@@ -63,7 +154,23 @@
         "whiteWinRate": 56.2,
         "blackWinRate": 27.8,
         "drawRate": 16.0,
-        "description": "Black accepts the gambit pawn."
+        "description": "Black accepts the gambit pawn.",
+        "lesson": {
+          "intro": [
+            "The Queen's Gambit Accepted: Black grabs the pawn and trusts White will struggle to win it back.",
+            "Modern theory says White does get the pawn back, but Black gains time to develop."
+          ],
+          "perMove": [
+            { "side": "white", "messages": ["1. d4 — solid center."] },
+            { "side": "black", "messages": ["1...d5 — symmetrical response."] },
+            { "side": "white", "messages": ["2. c4 — the gambit pawn is offered."] },
+            { "side": "black", "messages": ["2...dxc4 — Black accepts.", "Black temporarily wins a pawn but cedes the center. White will play e3 or Nf3 and recapture the pawn later."] }
+          ],
+          "outro": [
+            "The Accepted leads to open positions with active piece play.",
+            "Black aims for quick development with c5 to undermine d4 once the c-pawn is recovered."
+          ]
+        }
       },
       {
         "id": 22,
@@ -73,7 +180,23 @@
         "whiteWinRate": 55.4,
         "blackWinRate": 29.1,
         "drawRate": 15.5,
-        "description": "Black declines the gambit and maintains central tension."
+        "description": "Black declines the gambit and maintains central tension.",
+        "lesson": {
+          "intro": [
+            "The Queen's Gambit Declined is one of the most solid responses Black can choose.",
+            "Black supports d5 with the e-pawn and prepares calm piece development."
+          ],
+          "perMove": [
+            { "side": "white", "messages": ["1. d4."] },
+            { "side": "black", "messages": ["1...d5."] },
+            { "side": "white", "messages": ["2. c4 — the gambit move."] },
+            { "side": "black", "messages": ["2...e6 — Black declines, supporting d5 with the pawn.", "The trade-off: the c8-bishop is now blocked behind its own pawn. Freeing it will be a project."] }
+          ],
+          "outro": [
+            "The QGD leads to slow, manoeuvring positions where both sides build up patiently.",
+            "World champions like Karpov and Anand built careers on this rock-solid setup."
+          ]
+        }
       },
       {
         "id": 23,
@@ -83,7 +206,23 @@
         "whiteWinRate": 54.9,
         "blackWinRate": 29.8,
         "drawRate": 15.3,
-        "description": "A solid defense supporting the d5 pawn with c6."
+        "description": "A solid defense supporting the d5 pawn with c6.",
+        "lesson": {
+          "intro": [
+            "The Slav Defense supports d5 with the c-pawn instead of the e-pawn — keeping the c8-bishop's diagonal open.",
+            "It's considered one of the most reliable defenses in chess."
+          ],
+          "perMove": [
+            { "side": "white", "messages": ["1. d4."] },
+            { "side": "black", "messages": ["1...d5."] },
+            { "side": "white", "messages": ["2. c4 — the gambit."] },
+            { "side": "black", "messages": ["2...c6 — the Slav. Black supports d5 without locking in the bishop.", "If Black later plays e6, it's a Semi-Slav — combining the best of both worlds."] }
+          ],
+          "outro": [
+            "The Slav is famous for resilience and is favored by players who like clear plans.",
+            "Key idea: develop the c8-bishop to f5 or g4 before playing e6."
+          ]
+        }
       }
     ]
   },
@@ -98,6 +237,21 @@
     "popularity": 88,
     "difficulty": "Advanced",
     "description": "Black's most popular response to e4, leading to sharp tactical play.",
+    "lesson": {
+      "intro": [
+        "The Sicilian Defense is the most popular response to 1. e4 above club level.",
+        "Black refuses symmetry and immediately fights for an unbalanced position."
+      ],
+      "perMove": [
+        { "side": "white", "messages": ["1. e4 — the King's Pawn."] },
+        { "side": "black", "messages": ["1...c5 — the Sicilian.", "Instead of mirroring with e5, Black challenges d4 from the side and aims for sharp, asymmetric play."] }
+      ],
+      "outro": [
+        "Black accepts a slightly cramped position in exchange for long-term winning chances.",
+        "From here, the game branches into hundreds of named variations — Najdorf, Dragon, Sveshnikov, Taimanov, and more.",
+        "Pick a variation to see one popular continuation."
+      ]
+    },
     "variations": [
       {
         "id": 31,
@@ -107,7 +261,30 @@
         "whiteWinRate": 47.8,
         "blackWinRate": 36.2,
         "drawRate": 16.0,
-        "description": "The most popular and sharp variation of the Sicilian."
+        "description": "The most popular and sharp variation of the Sicilian.",
+        "lesson": {
+          "intro": [
+            "The Najdorf is the most famous Sicilian variation — Bobby Fischer's lifelong weapon.",
+            "It's flexible, deeply theoretical, and demands precise play from both sides."
+          ],
+          "perMove": [
+            { "side": "white", "messages": ["1. e4."] },
+            { "side": "black", "messages": ["1...c5 — the Sicilian."] },
+            { "side": "white", "messages": ["2. Nf3 — developing and preparing d4."] },
+            { "side": "black", "messages": ["2...d6 — Black prepares Nf6 without allowing e5."] },
+            { "side": "white", "messages": ["3. d4 — opening the center."] },
+            { "side": "black", "messages": ["3...cxd4 — Black accepts the Open Sicilian."] },
+            { "side": "white", "messages": ["4. Nxd4 — White's knight reaches a strong central square."] },
+            { "side": "black", "messages": ["4...Nf6 attacks e4 and develops naturally."] },
+            { "side": "white", "messages": ["5. Nc3 defends e4 and develops."] },
+            { "side": "black", "messages": ["5...a6 — the Najdorf move.", "This little pawn move prevents Nb5 and prepares ...b5 to expand on the queenside."] }
+          ],
+          "outro": [
+            "The Najdorf creates one of the most studied positions in chess.",
+            "White has many options here — 6. Be3 (English Attack), 6. Bg5 (sharpest), 6. Be2 (positional), and more.",
+            "Don't memorize raw lines — understand the typical plans for both sides."
+          ]
+        }
       },
       {
         "id": 32,
@@ -117,7 +294,30 @@
         "whiteWinRate": 46.9,
         "blackWinRate": 37.1,
         "drawRate": 16.0,
-        "description": "A hypermodern setup with fianchettoed bishop."
+        "description": "A hypermodern setup with fianchettoed bishop.",
+        "lesson": {
+          "intro": [
+            "The Sicilian Dragon — Black's setup with the bishop on g7 looks like a fire-breathing dragon along the long diagonal.",
+            "Both sides usually attack opposite kings. Pure violence."
+          ],
+          "perMove": [
+            { "side": "white", "messages": ["1. e4."] },
+            { "side": "black", "messages": ["1...c5 — the Sicilian."] },
+            { "side": "white", "messages": ["2. Nf3."] },
+            { "side": "black", "messages": ["2...d6."] },
+            { "side": "white", "messages": ["3. d4."] },
+            { "side": "black", "messages": ["3...cxd4."] },
+            { "side": "white", "messages": ["4. Nxd4 — strong central knight."] },
+            { "side": "black", "messages": ["4...Nf6 attacks e4."] },
+            { "side": "white", "messages": ["5. Nc3 defends e4."] },
+            { "side": "black", "messages": ["5...g6 — fianchetto coming.", "Black will play Bg7, putting the bishop on the long diagonal aiming at White's queenside."] }
+          ],
+          "outro": [
+            "The Dragon leads to opposite-side castling and races to mate.",
+            "White's main weapon is the Yugoslav Attack: Be3, Qd2, O-O-O, then h4–h5 to pry open the kingside.",
+            "Memorize key tactics — one slow move can lose the game."
+          ]
+        }
       },
       {
         "id": 33,
@@ -127,7 +327,27 @@
         "whiteWinRate": 48.1,
         "blackWinRate": 35.8,
         "drawRate": 16.1,
-        "description": "An early g6 setup avoiding some of White's attacking lines."
+        "description": "An early g6 setup avoiding some of White's attacking lines.",
+        "lesson": {
+          "intro": [
+            "The Accelerated Dragon plays the fianchetto without ...d6, hoping to avoid the Yugoslav Attack.",
+            "The trade-off: White can play c4 with strong central control — the Maroczy Bind."
+          ],
+          "perMove": [
+            { "side": "white", "messages": ["1. e4."] },
+            { "side": "black", "messages": ["1...c5."] },
+            { "side": "white", "messages": ["2. Nf3."] },
+            { "side": "black", "messages": ["2...g6 — early fianchetto.", "Black commits to the dragon setup quickly, without first playing d6."] },
+            { "side": "white", "messages": ["3. d4 opens the center."] },
+            { "side": "black", "messages": ["3...cxd4."] },
+            { "side": "white", "messages": ["4. Nxd4."] },
+            { "side": "black", "messages": ["4...Bg7 — the dragon bishop reaches its diagonal.", "Black aims for fast development and pressure on the long diagonal."] }
+          ],
+          "outro": [
+            "If White plays c4 here, you get the Maroczy Bind — a tough position to crack.",
+            "Black plays for piece activity and a timely d5 break to free the position."
+          ]
+        }
       }
     ]
   },
@@ -142,6 +362,20 @@
     "popularity": 65,
     "difficulty": "Intermediate",
     "description": "A solid defense creating a strong pawn chain.",
+    "lesson": {
+      "intro": [
+        "The French Defense is a classical response to 1. e4 that favors solidity over symmetry.",
+        "Black plans ...d5 to challenge White's e4 pawn from the side."
+      ],
+      "perMove": [
+        { "side": "white", "messages": ["1. e4."] },
+        { "side": "black", "messages": ["1...e6 — the French.", "Black prepares d5 without committing the c8-bishop's exit yet. The cost: that bishop will often be locked in."] }
+      ],
+      "outro": [
+        "From here, White typically plays 2. d4 d5 and the game branches: Advance (3. e5), Exchange (3. exd5), Tarrasch (3. Nd2), or Classical (3. Nc3).",
+        "The French is a great choice if you like solid, strategic positions."
+      ]
+    },
     "variations": [
       {
         "id": 41,
@@ -151,7 +385,25 @@
         "whiteWinRate": 50.8,
         "blackWinRate": 33.2,
         "drawRate": 16.0,
-        "description": "Sharp tactical play with early bishop pin."
+        "description": "Sharp tactical play with early bishop pin.",
+        "lesson": {
+          "intro": [
+            "The French Winawer is one of the sharpest and most complex French variations.",
+            "Black pins the c3 knight and is willing to accept doubled pawns to wreck White's structure."
+          ],
+          "perMove": [
+            { "side": "white", "messages": ["1. e4."] },
+            { "side": "black", "messages": ["1...e6 — French Defense."] },
+            { "side": "white", "messages": ["2. d4 — full center."] },
+            { "side": "black", "messages": ["2...d5 — challenging e4."] },
+            { "side": "white", "messages": ["3. Nc3 defends e4 and develops."] },
+            { "side": "black", "messages": ["3...Bb4 — the Winawer pin.", "Black threatens to capture on c3 and double White's pawns. If White wants to keep pawns intact, the knight must move or be defended."] }
+          ],
+          "outro": [
+            "Mainline: 4. e5 c5 5. a3 Bxc3+ 6. bxc3 — White accepts doubled c-pawns for the bishop pair.",
+            "Both sides have long-term structural goals; this is positional chess at its richest."
+          ]
+        }
       },
       {
         "id": 42,
@@ -161,7 +413,25 @@
         "whiteWinRate": 52.1,
         "blackWinRate": 31.9,
         "drawRate": 16.0,
-        "description": "Classical development with knight to f6."
+        "description": "Classical development with knight to f6.",
+        "lesson": {
+          "intro": [
+            "The French Classical develops the knight to f6 and attacks the e4 pawn directly.",
+            "White must decide: advance the pawn, exchange, or defend it."
+          ],
+          "perMove": [
+            { "side": "white", "messages": ["1. e4."] },
+            { "side": "black", "messages": ["1...e6 — French setup."] },
+            { "side": "white", "messages": ["2. d4."] },
+            { "side": "black", "messages": ["2...d5."] },
+            { "side": "white", "messages": ["3. Nc3."] },
+            { "side": "black", "messages": ["3...Nf6 — Classical French.", "Black puts immediate pressure on e4 with a natural piece move."] }
+          ],
+          "outro": [
+            "White usually plays 4. e5, kicking the knight and gaining space. The position becomes a battle for the e5 outpost.",
+            "Black aims for ...c5 to challenge d4 and free the cramped position."
+          ]
+        }
       }
     ]
   },
@@ -176,6 +446,23 @@
     "popularity": 78,
     "difficulty": "Intermediate",
     "description": "One of the oldest chess openings, named after a Spanish priest.",
+    "lesson": {
+      "intro": [
+        "The Ruy Lopez — also called the Spanish Game — is one of the oldest and most respected openings.",
+        "White's bishop pins the c6 knight against the king, putting long-term pressure on Black's center."
+      ],
+      "perMove": [
+        { "side": "white", "messages": ["1. e4 — classical opening."] },
+        { "side": "black", "messages": ["1...e5 — symmetric reply."] },
+        { "side": "white", "messages": ["2. Nf3 — attacks e5."] },
+        { "side": "black", "messages": ["2...Nc6 — defends."] },
+        { "side": "white", "messages": ["3. Bb5 — the Spanish bishop.", "It pins the c6 knight and threatens to disrupt Black's center. This is the move that launched a thousand games."] }
+      ],
+      "outro": [
+        "From here, Black has two main paths: 3...a6 (the Morphy Defense, mainline) or 3...Nf6 (the Berlin Defense, super-solid).",
+        "Each leads to entirely different middlegames."
+      ]
+    },
     "variations": [
       {
         "id": 51,
@@ -185,7 +472,25 @@
         "whiteWinRate": 52.8,
         "blackWinRate": 31.2,
         "drawRate": 16.0,
-        "description": "The Berlin Defense - a solid equalizing system."
+        "description": "The Berlin Defense - a solid equalizing system.",
+        "lesson": {
+          "intro": [
+            "The Berlin Defense became famous when Vladimir Kramnik used it to beat Garry Kasparov for the world title.",
+            "Black develops calmly and is happy to enter the Berlin Endgame — a position once thought lifeless, now considered rock solid."
+          ],
+          "perMove": [
+            { "side": "white", "messages": ["1. e4."] },
+            { "side": "black", "messages": ["1...e5."] },
+            { "side": "white", "messages": ["2. Nf3."] },
+            { "side": "black", "messages": ["2...Nc6."] },
+            { "side": "white", "messages": ["3. Bb5 — Ruy Lopez."] },
+            { "side": "black", "messages": ["3...Nf6 — the Berlin.", "Black ignores the bishop's pin and attacks e4. If White plays 4. O-O, Black can grab the pawn with Nxe4."] }
+          ],
+          "outro": [
+            "Mainline: 4. O-O Nxe4 5. d4 — leading to the Berlin Endgame after a queen trade.",
+            "It's a high-level drawing weapon and a great way to neutralize an aggressive opponent."
+          ]
+        }
       },
       {
         "id": 52,
@@ -195,7 +500,25 @@
         "whiteWinRate": 54.2,
         "blackWinRate": 30.1,
         "drawRate": 15.7,
-        "description": "The main line with a6 attacking the bishop."
+        "description": "The main line with a6 attacking the bishop.",
+        "lesson": {
+          "intro": [
+            "The Morphy Defense is the most popular reply to the Ruy Lopez at every level.",
+            "Black's tiny pawn move 3...a6 asks the bishop a question — and shapes the entire game."
+          ],
+          "perMove": [
+            { "side": "white", "messages": ["1. e4."] },
+            { "side": "black", "messages": ["1...e5."] },
+            { "side": "white", "messages": ["2. Nf3."] },
+            { "side": "black", "messages": ["2...Nc6."] },
+            { "side": "white", "messages": ["3. Bb5 — the Ruy Lopez."] },
+            { "side": "black", "messages": ["3...a6 — the Morphy move.", "Black asks the bishop: do you retreat, or capture? If 4. Bxc6 dxc6 Black gets the bishop pair; if 4. Ba4, the typical Closed Ruy Lopez begins."] }
+          ],
+          "outro": [
+            "After 4. Ba4 Nf6 5. O-O, the game enters the heart of Ruy Lopez theory.",
+            "It's a vast and rich opening — entire careers have been built studying just this position."
+          ]
+        }
       }
     ]
   },
@@ -209,7 +532,24 @@
     "drawRate": 16.5,
     "popularity": 71,
     "difficulty": "Advanced",
-    "description": "A hypermodern defense allowing White central control initially."
+    "description": "A hypermodern defense allowing White central control initially.",
+    "lesson": {
+      "intro": [
+        "The King's Indian Defense is one of Black's most aggressive openings — favored by Fischer, Kasparov, and Nakamura.",
+        "Black willingly cedes the center early, planning to attack it later with pieces and pawn breaks."
+      ],
+      "perMove": [
+        { "side": "white", "messages": ["1. d4 — Queen's Pawn opening."] },
+        { "side": "black", "messages": ["1...Nf6 — Black develops the knight and prevents 2. e4."] },
+        { "side": "white", "messages": ["2. c4 — White claims more central space."] },
+        { "side": "black", "messages": ["2...g6 — King's Indian setup.", "Black prepares to fianchetto the bishop on g7, where it will aim straight across the long diagonal."] }
+      ],
+      "outro": [
+        "The King's Indian is a hypermodern opening: let White build a big center, then strike at it.",
+        "Common plans involve ...e5 and ...f5, launching a kingside attack while White attacks on the queenside.",
+        "It's a fighter's opening — draws are rare."
+      ]
+    }
   },
   {
     "id": 7,
@@ -221,7 +561,21 @@
     "drawRate": 15.3,
     "popularity": 58,
     "difficulty": "Intermediate",
-    "description": "A flexible opening controlling the center from the flank."
+    "description": "A flexible opening controlling the center from the flank.",
+    "lesson": {
+      "intro": [
+        "The English Opening is a flexible, hypermodern way to start the game.",
+        "White controls the center indirectly with c4 and can transpose into many other systems."
+      ],
+      "perMove": [
+        { "side": "white", "messages": ["1. c4 — the English.", "Instead of grabbing the center with a pawn, White attacks d5 from the side and keeps options open."] }
+      ],
+      "outro": [
+        "The English can transpose into the Queen's Gambit, Réti, or stay independent.",
+        "It's a favorite of players who like to control the game's character before their opponent can dictate it.",
+        "Common follow-ups: 1...c5 (Symmetrical), 1...e5 (Reversed Sicilian), 1...Nf6 (flexible)."
+      ]
+    }
   },
   {
     "id": 8,
@@ -233,6 +587,21 @@
     "drawRate": 16.1,
     "popularity": 62,
     "difficulty": "Beginner",
-    "description": "A solid defense similar to the French but more flexible."
+    "description": "A solid defense similar to the French but more flexible.",
+    "lesson": {
+      "intro": [
+        "The Caro-Kann is the solid alternative to the Sicilian and the French.",
+        "Black prepares ...d5 with the c-pawn — supporting it without blocking the c8-bishop like in the French."
+      ],
+      "perMove": [
+        { "side": "white", "messages": ["1. e4 — White's most popular first move."] },
+        { "side": "black", "messages": ["1...c6 — the Caro-Kann.", "Black quietly prepares 2...d5, planning to develop the c8-bishop actively, unlike in the French."] }
+      ],
+      "outro": [
+        "The Caro-Kann is a favorite for players who want to avoid memorization wars.",
+        "Mainline: 2. d4 d5 3. Nc3 dxe4 4. Nxe4, with Black playing for solid development and a small structural edge.",
+        "It's been called 'the underground railroad to a draw' — but at high level it's far more than that."
+      ]
+    }
   }
 ] 

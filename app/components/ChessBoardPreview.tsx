@@ -36,10 +36,9 @@ export default function ChessBoardPreview({ fen, size }: ChessBoardPreviewProps)
           arePiecesDraggable={false}
           customBoardStyle={{
             borderRadius: "4px",
-            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
           }}
-          customDarkSquareStyle={{ backgroundColor: "#779952" }}
-          customLightSquareStyle={{ backgroundColor: "#edeed1" }}
+          customDarkSquareStyle={{ backgroundColor: "#8b8170" }}
+          customLightSquareStyle={{ backgroundColor: "#ede9dd" }}
         />
       </div>
     </div>
